@@ -30,6 +30,6 @@ class Transaction(models.Model):
         ordering = ['-created_at']
         indexes = [
             models.Index(fields=['account']),
-            models.Index(fields=['transaction_method','transaction_amount']),
-
+            models.Index(fields=['transaction_method','transaction_type']),
+            models.Index(fields=['created_at']),
         ]
