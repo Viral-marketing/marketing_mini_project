@@ -5,6 +5,8 @@ FROM python:3.14-rc-slim
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PATH="/root/.local/bin:/root/.cargo/bin:${PATH}"
+ENV UV_LINK_MODE=copy
+ENV UV_PROJECT_ENVIRONMENT=/opt/venv
 
 # 필수 패키지 설치
 RUN apt-get update && apt-get install -y curl build-essential && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -18,7 +20,7 @@ WORKDIR /app
 # pyproject.toml & uv.lock 복사 및 설치
 COPY ./pyproject.toml ./uv.lock ./
 
-RUN uv sync --all-packages
+RUN uv sync --all-groups
 
 # 애플리케이션 코드 복사
 COPY . .
