@@ -20,7 +20,7 @@ class TransactionSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at'
         ]
-        read_only_fields = ['id','account','created_at','updated_at']
+        read_only_fields = ['id','created_at','updated_at']
 
     def validate_transaction_amount(self,value):
         if value <= 0:
