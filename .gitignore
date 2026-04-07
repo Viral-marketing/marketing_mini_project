@@ -1,0 +1,31 @@
+# 환경변수
+.env
+.env.dev
+.env.prod
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# 가상환경
+.venv/
+venv/
+
+# Django
+*.sqlite3
+/staticfiles/
+/mediafiles/
+
+# Docker
+postgres_data/
+
+# IDE
+.idea/
+.vscode/
+
+# 기타
+*.log
+.DS_Store
