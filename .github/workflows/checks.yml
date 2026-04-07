@@ -34,7 +34,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.14'
+        python-version: '3.12'
 
     - name: Install uv
       run: |
@@ -43,7 +43,7 @@ jobs:
         echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
     - name: Install Packages & Libraries
-      run: uv sync --dev-packages
+      run: uv sync --dev-groups
 
     - name: Run ruff (Linting)
       run: uv run ruff check .
