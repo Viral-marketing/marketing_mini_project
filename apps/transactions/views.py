@@ -13,7 +13,7 @@ class TransactionList(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-       return Transaction.objects.filter(account__user=self.request.user).order_by('account_id')
+       return Transaction.objects.filter(account__user=self.request.user)
 
 class TransactionDetail(generics.RetrieveUpdateDestroyAPIView):
     ...
