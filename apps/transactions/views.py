@@ -18,3 +18,5 @@ class TransactionList(generics.ListCreateAPIView):
 class TransactionDetail(generics.RetrieveUpdateDestroyAPIView):
     ...
 
+
+

@@ -1,5 +1,6 @@
 from django.db import models
 from apps.accounts.models import Account
+from apps.common.constants import TRANSACTION_TYPE,TRANSACTION_METHOD
 
 class Transaction(models.Model):
 
@@ -33,6 +34,6 @@ class Transaction(models.Model):
         ordering = ['-created_at']
         indexes = [
             models.Index(fields=['account']),
-            models.Index(fields=['transaction_method','transaction_type']),
+            models.Index(fields=['transaction_type','transaction_method']),
             models.Index(fields=['created_at']),
         ]
