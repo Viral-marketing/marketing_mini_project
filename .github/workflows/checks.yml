@@ -50,12 +50,24 @@ jobs:
 
     - name: Run Django Migration
       env:
-        DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB }}
+        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        DB_HOST: localhost
+        DB_PORT: "5432"
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        DJANGO_SETTINGS_MODULE: config.settings.dev
       run: |
         uv run python manage.py makemigrations
         uv run python manage.py migrate
 
     - name: Run Django Tests
       env:
-        DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB }}
+        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        DB_HOST: localhost
+        DB_PORT: "5432"
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        DJANGO_SETTINGS_MODULE: config.settings.dev
       run: uv run python manage.py test
