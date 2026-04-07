@@ -16,9 +16,9 @@ jobs:
       postgres:
         image: postgres:15-alpine
         env:
-          POSTGRES_USER: ${{ secrets.myuser }}
-          POSTGRES_PASSWORD: ${{ secrets.mypassword }}
-          POSTGRES_DB: ${{ secrets.mydb }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         ports:
           - 5432:5432
         options: >-
@@ -50,12 +50,12 @@ jobs:
 
     - name: Run Django Migration
       env:
-        DATABASE_URL: postgres://${{ secrets.myuser }}:${{ secrets.mypassword }}@localhost:5432/${{ secrets.mydb }}
+        DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB }}
       run: |
         uv run python manage.py makemigrations
         uv run python manage.py migrate
 
     - name: Run Django Tests
       env:
-        DATABASE_URL: postgres://${{ secrets.myuser }}:${{ secrets.mypassword }}@localhost:5432/${{ secrets.mydb }}
+        DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/${{ secrets.POSTGRES_DB }}
       run: uv run python manage.py test
