@@ -36,7 +36,7 @@ select = [
     "B",  # bugbear (잠재적 버그 검사)
     "Q",  # flake8-quotes (따옴표 스타일 강제)
 ]
-ignore = ["E203"]  # black과 호환성 위해
+ignore = ["E203", "F403", "F405"]  # black과 호환성 위해
 fixable = ["ALL"]  # 모든 수정 가능한 문제 자동 수정
 
 [tool.ruff.format]
