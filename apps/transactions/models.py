@@ -26,6 +26,7 @@ class Transaction(models.Model):
     transaction_type = models.CharField(choices=TRANSACTION_TYPE,max_length=20,default="DEPOSIT")
     # type으로 입금인지 출금인지 확인 출금이면 비지니스로직에서 '-' 추가 필요
     transaction_method = models.CharField(choices=TRANSACTION_METHOD,max_length=20,default="ATM")
+    balance_after = models.DecimalField(max_digits=20,decimal_places=2,editable=False)
     memo = models.TextField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
