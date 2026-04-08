@@ -1,11 +1,4 @@
 from django.db import models
-
-<<<<<<< HEAD
-
-class Account(models.Model):
-    ...
-
-=======
 from apps.common.constants import ACCOUNT_TYPE, BANK_CODES
 
 
@@ -25,4 +18,3 @@ class Account(models.Model):
 
     def __str__(self):
         return f"{self.bank_code} - {self.account_number}"
->>>>>>> b82306b4e066480331f154f74fcc44a7656063a2
