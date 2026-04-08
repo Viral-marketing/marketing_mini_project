@@ -4,8 +4,18 @@ from apps.transactions.models import Transaction
 
 class TransactionListService:
     @staticmethod
-    def transaction_list(user):
-        return Transaction.objects.filter(account__user=user)
+    def transaction_list(user,account=None,transaction_type=None,transaction_amount=None):
+        # 기본적으로 user만 인자로 받고 나머지는 기본값으로 None을 할당해 기본 queryset 설정
+        queryset = Transaction.objects.filter(account__user=user)
+
+        if account: # account가 입력됬을때 조건추가
+            queryset = queryset.filter(account=account)
+        if transaction_type: # transaction_type가 입력됬을때 조건추가
+            queryset = queryset.filter(transaction_type=transaction_type)
+        if transaction_amount: # transaction_amount가 입력됬을때 조건추가
+            queryset = queryset.filter(transaction_amount__gte=transaction_amount)
+        # 최종 queryset 반환
+        return queryset
 
     @staticmethod
     @transaction.atomic
@@ -29,3 +39,9 @@ class TransactionListService:
             memo=memo
           )
 #     객체 생성하면서 업데이트된 account balance를 account에 적용
+
+class TransactionDetailService:
+    @staticmethod
+    def transaction_detail(user,pk):
+        # Queryset을 반환 하기 때문에 get사용 불가능 filter 사용해야함
+        return Transaction.objects.filter(account__user=user,pk=pk)
