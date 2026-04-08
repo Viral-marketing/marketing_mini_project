@@ -13,3 +13,7 @@ repos:
     args: [--maxkb=100]  # 100KB 초과 파일 커밋 방지
   - id: trailing-whitespace
   - id: end-of-file-fixer
+- repo: https://github.com/Yelp/detect-secrets
+  rev: v1.4.0
+  hooks:
+  - id: detect-secrets
