@@ -9,7 +9,7 @@ class TransactionListService:
         queryset = Transaction.objects.filter(account__user=user)
 
         if account: # account가 입력됬을때 조건추가
-            queryset = queryset.filter(account=account)
+            queryset = queryset.filter(account_id=account)
         if transaction_type: # transaction_type가 입력됬을때 조건추가
             queryset = queryset.filter(transaction_type=transaction_type)
         if transaction_amount: # transaction_amount가 입력됬을때 조건추가

@@ -19,7 +19,7 @@ class TransactionListView(generics.ListCreateAPIView):
         transaction_amount = None
 
         if self.request.GET.get('account'):
-           account = self.request.GET.get('account_id')
+           account = self.request.GET.get('account')
         if self.request.GET.get('transaction_type'):
             transaction_type = self.request.GET.get('transaction_type')
         if self.request.GET.get('transaction_amount'):

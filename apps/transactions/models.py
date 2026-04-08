@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import GeneratedField
+
 from apps.accounts.models import Account
 from apps.common.constants import TRANSACTION_TYPE,TRANSACTION_METHOD
 
@@ -21,12 +23,13 @@ class Transaction(models.Model):
 
     account = models.ForeignKey(Account,on_delete=models.SET_NULL,related_name='transactions',null=True)
     # 계좌가 삭제되어도 거래기록은 남아있어야함
-    transaction_amount = models.DecimalField(max_digits=10,decimal_places=2)
-    # 소수점 2자리까지 표시, 8자리 까지 표시가능(천만원)
+    transaction_amount = models.DecimalField(max_digits=20,decimal_places=2)
+    # 소수점 2자리까지 표시, 18자리 까지 표시가능
     transaction_type = models.CharField(choices=TRANSACTION_TYPE,max_length=20,default="DEPOSIT")
     # type으로 입금인지 출금인지 확인 출금이면 비지니스로직에서 '-' 추가 필요
     transaction_method = models.CharField(choices=TRANSACTION_METHOD,max_length=20,default="ATM")
-    memo = models.TextField()
+    balance_after = models.DecimalField(max_digits=20,decimal_places=2,editable=False)
+    memo = models.TextField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -37,3 +40,9 @@ class Transaction(models.Model):
             models.Index(fields=['transaction_type','transaction_amount','transaction_method']),
             models.Index(fields=['created_at']),
         ]
+    def save(self,*args,**kwargs):
+        if self.account:
+            if self.transaction_type == 'DEPOSIT':
+                self.balance_after=self.account.balance+self.transaction_amount
+            else :
+                self.balance_after=self.account.balance-self.transaction_amount
