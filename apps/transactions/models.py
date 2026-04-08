@@ -1,6 +1,8 @@
 from django.db import models
+
 from apps.accounts.models import Account
-from apps.common.constants import TRANSACTION_TYPE,TRANSACTION_METHOD
+from apps.common.constants import TRANSACTION_METHOD, TRANSACTION_TYPE
+
 
 class Transaction(models.Model):
 
@@ -21,7 +23,7 @@ class Transaction(models.Model):
 
     account = models.ForeignKey(Account,
                                 on_delete=models.SET_NULL,
-                                related_name='transactions',
+                                related_name="transactions",
                                 null=True
                                 )
     # 계좌가 삭제되어도 거래기록은 남아있어야함
@@ -40,18 +42,20 @@ class Transaction(models.Model):
                                         decimal_places=2,
                                         editable=False
                                         )
-    memo = models.TextField(null=True)
+    memo = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
         indexes = [
-            models.Index(fields=['account']),
-            models.Index(fields=['transaction_type',
-                                 'transaction_amount',
-                                 'transaction_method'
+            models.Index(fields=["account"]),
+            models.Index(fields=["transaction_type",
+                                 "transaction_amount",
+                                 "transaction_method"
                                  ]
                          ),
-            models.Index(fields=['created_at']),
+            models.Index(fields=["created_at"]),
         ]
+    def __str__(self):
+        return f"{self.account.user}의 {self.account}거래내역"
