@@ -107,4 +107,5 @@ class TransactionServiceTest(TestCase):
         self.assertEqual(self.account, transaction.account)
         self.assertEqual(transaction.account.user, self.user)
         self.account.refresh_from_db()
+        transaction.refresh_from_db()
         self.assertEqual(transaction.balance_after, self.account.balance)
