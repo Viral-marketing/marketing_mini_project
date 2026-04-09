@@ -10,12 +10,38 @@ from apps.transactions.services import (
     TransactionDetailService,
     TransactionListService,
 )
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 
 class TransactionListView(generics.ListCreateAPIView):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
     permission_classes = (CustomPermissionService,)  # 로그인 유저 검증 및 권한체크
+
+    @extend_schema(
+        summary="거래 내역 목록 조회 및 검색",
+        description="사용자의 거래 내역을 조회합니다. 계좌, 타입, 금액으로 필터링이 가능합니다.",
+        parameters=[
+            OpenApiParameter("account", OpenApiTypes.INT, description="계좌 ID 필터"),
+            OpenApiParameter("transaction_type", OpenApiTypes.STR,
+                             description="DEPOSIT(입금) 또는 WITHDRAW(출금)"),
+            OpenApiParameter("transaction_amount", OpenApiTypes.DECIMAL,
+                             description="최소 거래 금액"),
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="새로운 거래 내역 생성",
+        description="입금 또는 출금 거래를 생성하고 계좌 잔액을 최신화합니다.",
+        request=TransactionSerializer,
+        responses={201: TransactionSerializer}
+    )
+    def post(self, request, *args, **kwargs):
+        return super().post(*args, **kwargs)
+
 
     def get_queryset(self):
 
