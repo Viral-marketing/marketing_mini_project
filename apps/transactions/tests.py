@@ -99,10 +99,9 @@ class TransactionServiceTest(TestCase):
         transaction = TransactionListService.transaction_create(
             user=self.user,
             account=self.account,
+            transaction_type="DEPOSIT",
             transaction_method="ATM",
             transaction_amount=10.02,
-            transaction_type="DEPOSIT",
-            balance_after = self.account.balance,
             memo="test_meno",
         )
         self.assertEqual(self.account, transaction.account)
