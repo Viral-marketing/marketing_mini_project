@@ -102,6 +102,7 @@ class TransactionServiceTest(TestCase):
             transaction_method="ATM",
             transaction_amount=10.02,
             transaction_type="DEPOSIT",
+            balance_after = self.account.balance,
             memo="test_meno",
         )
         self.assertEqual(self.account, transaction.account)
