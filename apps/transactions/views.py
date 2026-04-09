@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from rest_framework import generics
+from rest_framework.exceptions import ValidationError
 
 from apps.transactions.models import Transaction
 from apps.transactions.serializers import TransactionSerializer
@@ -28,7 +29,14 @@ class TransactionListView(generics.ListCreateAPIView):
         if self.request.GET.get("transaction_type"):
             transaction_type = self.request.GET.get("transaction_type")
         if self.request.GET.get("transaction_amount"):
-            transaction_amount = Decimal(self.request.GET.get("transaction_amount"))
+            transaction_amount = self.request.GET.get("transaction_amount")
+            # request에서 transaction_amount를 transaction_amount에 할당
+            if transaction_amount: # transaction_amount가 있으면
+                try:
+                    transaction_amount = Decimal(transaction_amount) # Decimal로 형변환
+                except Exception: # 만일 형변환 안되면 에러처리 (만일 str이 들어오면 형변환이 안됨)
+                    raise ValidationError({"transaction_amount":"유효한 숫자를 입력해주세요"})
+
         # 모든 조건들이 입력되지 않으면 ListCreateAPIView는 pk를 입력받지 않는 url이므로
         # 한 user의 여러 account에 대한 transaction으로 필터링됨
         return TransactionListService.transaction_list(
@@ -41,7 +49,8 @@ class TransactionListView(generics.ListCreateAPIView):
         transaction_type = serializer.validated_data["transaction_type"]
         transaction_method = serializer.validated_data["transaction_method"]
         transaction_amount = serializer.validated_data["transaction_amount"]
-        memo = serializer.validated_data["memo"]
+        memo = serializer.validated_data.get("memo","")
+        # validated_data.get("memo","")로 수정해야 memo가 blank일때 에러를 방지할수 있다
         # services에서 정의한 transaction_create을 활용하기 전 변수 설정
         result = TransactionListService.transaction_create(
             user,
