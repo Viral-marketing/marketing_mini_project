@@ -1,6 +1,8 @@
 from django.db import models
+
 from apps.accounts.models import Account
 from apps.common.constants import TRANSACTION_METHOD, TRANSACTION_TYPE
+
 
 class Transaction(models.Model):
     # # 거래 타입
