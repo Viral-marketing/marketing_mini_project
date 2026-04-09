@@ -39,6 +39,7 @@ class Transaction(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        db_table = "transaction"
         ordering = ["-created_at"]
         indexes = [
             models.Index(fields=["account"]),
@@ -49,4 +50,4 @@ class Transaction(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.account.user}의 {self.account}거래내역"
+        return f"{self.account.user.name}의 {self.account}거래내역"
