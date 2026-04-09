@@ -108,38 +108,3 @@ class TransactionServiceTest(TestCase):
         self.account.refresh_from_db()
         transaction.refresh_from_db()
         self.assertEqual(transaction.balance_after, self.account.balance)
-
-class TransactionViewTest(TestCase):
-    def setUp(self):
-        self.user_1 = User.objects.create_user(
-            name="test_user_1",
-            username="test_user_1",
-            email="test1@test.com",
-            password="test1",
-            is_staff=False,
-            is_superuser=False,
-        )
-        self.user_2 = User.objects.create_user(
-            name="test_user_2",
-            username="test_user_2",
-            email="test2@test.com",
-            password="test2",
-            is_staff=False,
-            is_superuser=False,
-        )
-        self.user_3 = User.objects.create_user(
-            name="test_user_3",
-            username="test_user_3",
-            email="test3@test.com",
-            password="test3",
-            is_staff=False,
-            is_superuser=False,
-        )
-        self.account = Account.objects.create(
-            user=self.user_1,
-            account_number="1234567890",
-            bank_code="001",
-            account_type="CHECKING",
-            balance=100,
-        )
-    def
