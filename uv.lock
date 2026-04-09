@@ -59,6 +59,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "django" },
     { name = "djangorestframework" },
+    { name = "drf-spectacular" },
     { name = "psycopg2-binary" },
     { name = "python-dotenv" },
 ]
@@ -78,6 +79,7 @@ prod = [
 requires-dist = [
     { name = "django", specifier = ">=6.0.3" },
     { name = "djangorestframework", specifier = ">=3.17.1" },
+    { name = "drf-spectacular", specifier = ">=0.29.0" },
     { name = "psycopg2-binary", specifier = ">=2.9.11" },
     { name = "python-dotenv", specifier = ">=1.2.2" },
 ]
