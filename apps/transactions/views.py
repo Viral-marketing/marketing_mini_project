@@ -1,5 +1,7 @@
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import generics
 from rest_framework.exceptions import ValidationError
 
@@ -10,8 +12,6 @@ from apps.transactions.services import (
     TransactionDetailService,
     TransactionListService,
 )
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
 
 
 class TransactionListView(generics.ListCreateAPIView):
@@ -21,14 +21,18 @@ class TransactionListView(generics.ListCreateAPIView):
 
     @extend_schema(
         summary="거래 내역 목록 조회 및 검색",
-        description="사용자의 거래 내역을 조회합니다. 계좌, 타입, 금액으로 필터링이 가능합니다.",
+        description="사용자의 거래 내역을 조회 계좌, 타입, 금액으로 필터링이 가능",
         parameters=[
             OpenApiParameter("account", OpenApiTypes.INT, description="계좌 ID 필터"),
-            OpenApiParameter("transaction_type", OpenApiTypes.STR,
-                             description="DEPOSIT(입금) 또는 WITHDRAW(출금)"),
-            OpenApiParameter("transaction_amount", OpenApiTypes.DECIMAL,
-                             description="최소 거래 금액"),
-        ]
+            OpenApiParameter(
+                "transaction_type",
+                OpenApiTypes.STR,
+                description="DEPOSIT(입금) 또는 WITHDRAW(출금)",
+            ),
+            OpenApiParameter(
+                "transaction_amount", OpenApiTypes.DECIMAL, description="최소 거래 금액"
+            ),
+        ],
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
@@ -37,11 +41,10 @@ class TransactionListView(generics.ListCreateAPIView):
         summary="새로운 거래 내역 생성",
         description="입금 또는 출금 거래를 생성하고 계좌 잔액을 최신화합니다.",
         request=TransactionSerializer,
-        responses={201: TransactionSerializer}
+        responses={201: TransactionSerializer},
     )
     def post(self, request, *args, **kwargs):
         return super().post(*args, **kwargs)
-
 
     def get_queryset(self):
 
@@ -57,11 +60,13 @@ class TransactionListView(generics.ListCreateAPIView):
         if self.request.GET.get("transaction_amount"):
             transaction_amount = self.request.GET.get("transaction_amount")
             # request에서 transaction_amount를 transaction_amount에 할당
-            if transaction_amount: # transaction_amount가 있으면
+            if transaction_amount:  # transaction_amount가 있으면
                 try:
-                    transaction_amount = Decimal(transaction_amount) # Decimal로 형변환
-                except Exception: # 만일 형변환 안되면 에러처리 (만일 str이 들어오면 형변환이 안됨)
-                    raise ValidationError({"transaction_amount":"유효한 숫자를 입력해주세요"})
+                    transaction_amount = Decimal(transaction_amount)
+                except (InvalidOperation, ValueError, Exception) as e:
+                    raise ValidationError(
+                        {"transaction_amount": "유효한 숫자를 입력해주세요"}
+                    ) from e
 
         # 모든 조건들이 입력되지 않으면 ListCreateAPIView는 pk를 입력받지 않는 url이므로
         # 한 user의 여러 account에 대한 transaction으로 필터링됨
@@ -75,7 +80,7 @@ class TransactionListView(generics.ListCreateAPIView):
         transaction_type = serializer.validated_data["transaction_type"]
         transaction_method = serializer.validated_data["transaction_method"]
         transaction_amount = serializer.validated_data["transaction_amount"]
-        memo = serializer.validated_data.get("memo","")
+        memo = serializer.validated_data.get("memo", "")
         # validated_data.get("memo","")로 수정해야 memo가 blank일때 에러를 방지할수 있다
         # services에서 정의한 transaction_create을 활용하기 전 변수 설정
         result = TransactionListService.transaction_create(
