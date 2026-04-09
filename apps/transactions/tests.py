@@ -15,6 +15,7 @@ class TransactionModelTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             name="test_user",
+            username="test_user",
             email="test@test.com",
             password="test",
         )
@@ -47,6 +48,7 @@ class TransactionSerializerTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             name="test_user",
+            username="test_user",
             email="test@test.com",
             password="test",
         )
@@ -80,6 +82,7 @@ class TransactionServiceTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             name="test_user",
+            username="test_user",
             email="test@test.com",
             password="test",
         )
