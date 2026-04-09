@@ -5,9 +5,7 @@ from apps.common.constants import ACCOUNT_TYPE, BANK_CODES
 
 class Account(models.Model):
     user = models.ForeignKey(
-        "users.User",
-        on_delete=models.CASCADE,
-        related_name="accounts"
+        "users.User", on_delete=models.CASCADE, related_name="accounts"
     )
     account_number = models.CharField(max_length=20, unique=True)
     bank_code = models.CharField(max_length=10, choices=BANK_CODES)
