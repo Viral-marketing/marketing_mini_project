@@ -5,11 +5,12 @@ from apps.transactions.models import Transaction
 
 class TransactionSerializer(serializers.ModelSerializer):
     transaction_type_display = serializers.CharField(
-        source="get_transaction_type_display",read_only=True
+        source="get_transaction_type_display", read_only=True
     )
     transaction_method_display = serializers.CharField(
-        source="get_transaction_method_display",read_only=True
+        source="get_transaction_method_display", read_only=True
     )
+
     class Meta:
         model = Transaction
         fields = [
@@ -27,9 +28,9 @@ class TransactionSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["id","created_at","updated_at","balance_after"]
+        read_only_fields = ["id", "created_at", "updated_at", "balance_after"]
 
-    def validate_transaction_amount(self,value):
+    def validate_transaction_amount(self, value):
         if value <= 0:
             raise serializers.ValidationError("거래금액은 0보다 커야합니다")
         return value

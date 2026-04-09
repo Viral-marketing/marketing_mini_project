@@ -14,7 +14,7 @@ from apps.transactions.services import (
 class TransactionListView(generics.ListCreateAPIView):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
-    permission_classes = (CustomPermissionService,) # 로그인 유저 검증 및 권한체크
+    permission_classes = (CustomPermissionService,)  # 로그인 유저 검증 및 권한체크
 
     def get_queryset(self):
 
@@ -24,7 +24,7 @@ class TransactionListView(generics.ListCreateAPIView):
         transaction_amount = None
 
         if self.request.GET.get("account"):
-           account = self.request.GET.get("account")
+            account = self.request.GET.get("account")
         if self.request.GET.get("transaction_type"):
             transaction_type = self.request.GET.get("transaction_type")
         if self.request.GET.get("transaction_amount"):
@@ -32,10 +32,10 @@ class TransactionListView(generics.ListCreateAPIView):
         # 모든 조건들이 입력되지 않으면 ListCreateAPIView는 pk를 입력받지 않는 url이므로
         # 한 user의 여러 account에 대한 transaction으로 필터링됨
         return TransactionListService.transaction_list(
-            self.request.user,account,transaction_type,transaction_amount
+            self.request.user, account, transaction_type, transaction_amount
         )
 
-    def perform_create(self,serializer):
+    def perform_create(self, serializer):
         user = self.request.user
         account = serializer.validated_data["account"]
         transaction_type = serializer.validated_data["transaction_type"]
@@ -44,7 +44,12 @@ class TransactionListView(generics.ListCreateAPIView):
         memo = serializer.validated_data["memo"]
         # services에서 정의한 transaction_create을 활용하기 전 변수 설정
         result = TransactionListService.transaction_create(
-            user,account,transaction_type,transaction_method,transaction_amount,memo
+            user,
+            account,
+            transaction_type,
+            transaction_method,
+            transaction_amount,
+            memo,
         )
         serializer.instance = result
         """
@@ -65,7 +70,7 @@ class TransactionDetailView(generics.RetrieveUpdateDestroyAPIView):
         사용자의 계좌 목록 중 특정 계좌에 대한 거래내역이 필터링됨
         """
         return TransactionDetailService.transaction_detail(
-            self.request.user,pk=self.kwargs["transaction_pk"]
+            self.request.user, pk=self.kwargs["transaction_pk"]
         )
 
     # 나머지 수정 삭제 단일조회는 기본적인 내장 기능을 사용
