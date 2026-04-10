@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import IsAuthenticated
 
@@ -5,6 +6,21 @@ from .models import Account
 from .serializers import AccountSerializer
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="계좌 목록 조회",
+        description="로그인한 사용자의 모든 계좌내역을 조회합니다.",
+    ),
+    retrieve=extend_schema(
+        summary="계좌 상세 조회",
+        description="특정 계좌의 상세 내역을 조회합니다.",
+    ),
+    create=extend_schema(
+        summary="계좌 등록",
+        description="새로운 계좌를 등록합니다.",
+    ),
+    destroy=extend_schema(summary="계좌 삭제", description="계좌를 삭제합니다."),
+)
 class AccountViewSet(
     mixins.CreateModelMixin,  # 계좌 생성
     mixins.ListModelMixin,  # 사용자의 모든 계좌 목록 조회
