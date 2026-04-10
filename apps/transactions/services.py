@@ -1,6 +1,7 @@
 from decimal import Decimal
-from django.db.models import Q
+
 from django.db import transaction
+from django.db.models import Q
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 
@@ -22,16 +23,21 @@ def check_staff(request):
 
 class TransactionListService:
     @staticmethod
-    def transaction_list(user, account=None, transaction_type=None, transaction_amount=None):
+    def transaction_list(
+        user, account=None, transaction_type=None, transaction_amount=None
+    ):
         # 1. 기본 쿼리셋 설정
         if user.is_superuser:
             queryset = Transaction.objects.all()
         else:
-            queryset = Transaction.objects.filter(Q(account__user=user) | Q(account__isnull=True))
+            queryset = Transaction.objects.filter(
+                Q(account__user=user) | Q(account__isnull=True)
+            )
         if account:
-            queryset = queryset.filter(account_id=account)
-        elif account is None:
-            queryset = queryset.filter(account__isnull=True)
+            if account == "null":
+                queryset = Transaction.objects.filter(account__isnull=True)
+            else:
+                queryset = queryset.filter(account_id=account)
         if transaction_type:  # transaction_type가 입력됬을때 조건추가
             queryset = queryset.filter(transaction_type=transaction_type)
         if transaction_amount:  # transaction_amount가 입력됬을때 조건추가

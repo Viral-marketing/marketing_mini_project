@@ -6,7 +6,10 @@ from rest_framework import generics
 from rest_framework.exceptions import ValidationError
 
 from apps.transactions.models import Transaction
-from apps.transactions.serializers import TransactionSerializer,TransactionUpdateSerializer
+from apps.transactions.serializers import (
+    TransactionSerializer,
+    TransactionUpdateSerializer,
+)
 from apps.transactions.services import (
     CustomPermissionService,
     TransactionDetailService,
@@ -92,8 +95,9 @@ class TransactionDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (CustomPermissionService,)
     lookup_field = "id"
     lookup_url_kwarg = "transaction_pk"
+
     def get_serializer_class(self):
-        if self.request.method in ["PUT","PATCH"]:
+        if self.request.method in ["PUT", "PATCH"]:
             return TransactionUpdateSerializer
         return TransactionSerializer
 
