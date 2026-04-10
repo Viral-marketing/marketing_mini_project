@@ -34,3 +34,6 @@ class TransactionSerializer(serializers.ModelSerializer):
         if value <= 0:
             raise serializers.ValidationError("거래금액은 0보다 커야합니다")
         return value
+
+
+#

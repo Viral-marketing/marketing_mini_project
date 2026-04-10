@@ -50,4 +50,4 @@ class Transaction(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.account.user.name}의 {self.account}거래내역"
+        return f"{self.account}거래내역"
