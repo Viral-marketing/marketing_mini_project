@@ -40,12 +40,12 @@ class UserCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"password": "비밀번호 불일치"})
 
         # 패스워드에 이메일 아이디 포함 확인 3자리 이상 연속 중복
-        email_id = email.split("@")[0]
+        email_id = email.split("@")[0].lower()
         password_low = password.lower()
         if len(email_id) >= 3:
             for i in range(len(email_id) - 2):
-                latter = email_id[i : i + 3]
-                if latter in password_low:
+                chunk = email_id[i : i + 3]
+                if chunk in password_low:
                     raise serializers.ValidationError(
                         {"password": "아이디 연속 3자 이상 포함"}
                     )
@@ -58,3 +58,13 @@ class UserReadSerializer(serializers.ModelSerializer):
         model = User
         fields = ["name", "email", "phone", "created_at", "updated_at"]
         read_only_fields = fields
+
+
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True, style={"input_type": "password"})
+
+
+class UserUpdateSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=20, required=False)
+    phone = serializers.CharField(max_length=15, required=False)
