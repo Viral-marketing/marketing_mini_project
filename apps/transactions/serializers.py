@@ -36,4 +36,40 @@ class TransactionSerializer(serializers.ModelSerializer):
         return value
 
 
+class TransactionUpdateSerializer(serializers.ModelSerializer):
+    transaction_type_display = serializers.CharField(
+        source="get_transaction_type_display", read_only=True
+    )
+    transaction_method_display = serializers.CharField(
+        source="get_transaction_method_display", read_only=True
+    )
+
+    class Meta:
+        model = Transaction
+        fields = [
+            "id",
+            "account",
+            "transaction_type",
+            "transaction_type_display",
+            # 응답용 transaction_type
+            "transaction_method",
+            "transaction_method_display",
+            # 응답용 transaction_method
+            "transaction_amount",
+            "balance_after",
+            "memo",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = [
+            "id",
+            "account",
+            "transaction_type",
+            "transaction_amount",
+            "created_at",
+            "updated_at",
+            "balance_after",
+        ]
+
+
 #
