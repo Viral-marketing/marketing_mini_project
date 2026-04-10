@@ -34,46 +34,46 @@ jobs:
           --health-retries 5
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
 
-    - name: Install uv
-      run: |
-        curl -LsSf https://astral.sh/uv/install.sh | sh
-        echo "$HOME/.local/bin" >> $GITHUB_PATH
-        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
-    - name: Install Packages & Libraries
-      run: uv sync --all-groups
+      - name: Install Packages & Libraries
+        run: uv sync --all-groups
 
-    - name: Run ruff (Linting)
-      run: uv run ruff check .
+      - name: Run ruff (Linting)
+        run: uv run ruff check .
 
-    - name: Run Django Migration
-      env:
-        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        DB_HOST: localhost
-        DB_PORT: "5432"
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
-        DJANGO_SETTINGS_MODULE: config.settings.dev
-      run: |
-        uv run python manage.py makemigrations
-        uv run python manage.py migrate
+      - name: Run Django Migration
+        env:
+          DB_NAME: ${{ secrets.POSTGRES_DB }}
+          DB_USER: ${{ secrets.POSTGRES_USER }}
+          DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          DB_HOST: localhost
+          DB_PORT: "5432"
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DJANGO_SETTINGS_MODULE: config.settings.dev
+        run: |
+          uv run python manage.py makemigrations
+          uv run python manage.py migrate
 
-    - name: Run Django Tests
-      env:
-        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        DB_HOST: localhost
-        DB_PORT: "5432"
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
-        DJANGO_SETTINGS_MODULE: config.settings.dev
-      run: uv run python manage.py test
+      - name: Run Django Tests
+        env:
+          DB_NAME: ${{ secrets.POSTGRES_DB }}
+          DB_USER: ${{ secrets.POSTGRES_USER }}
+          DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          DB_HOST: localhost
+          DB_PORT: "5432"
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DJANGO_SETTINGS_MODULE: config.settings.dev
+        run: uv run python manage.py test
