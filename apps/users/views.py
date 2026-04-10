@@ -7,8 +7,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .serializers import UserCreateSerializer, UserLoginSerializer, UserReadSerializer
-from .services import create_user, login_user
+from .serializers import (
+    UserCreateSerializer,
+    UserLoginSerializer,
+    UserReadSerializer,
+    UserUpdateSerializer,
+)
+from .services import create_user, delete_user, login_user, update_user
 from .utils import delete_auth_cookies, set_auth_cookies
 
 logger = logging.getLogger(__name__)
@@ -23,7 +28,7 @@ class UserCreateAPIView(APIView):
         description="이메일, 비밀번호, 이름, 전화번호를 받아 새로운 유저를 생성",
         request=UserCreateSerializer,  # 요청 데이터 형식
         responses={201: UserReadSerializer},  # 응답 데이터 형식
-        tags=["사용자 관리"],
+        tags=["user CRUD"],
     )
     def post(self, request):
         # 시리얼 라이저로 검증
@@ -100,4 +105,49 @@ class LogoutAPIView(APIView):
         except Exception as e:
             logger.warning(f" 토큰 블랙리스트 등록 실패: {e}")
 
+        return delete_auth_cookies(response)
+
+
+class UserProfieAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        summary="유저 프로필 조회",
+        tags=["user CRUD"],
+        responses={200: UserReadSerializer},
+    )
+    def get(self, request):
+        serializer = UserReadSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        summary="유저 프롶필 수정",
+        tags=["user CRUD"],
+        request=UserUpdateSerializer,
+        responses={200: UserReadSerializer},
+    )
+    def patch(self, request):
+        serializer = UserUpdateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        updated_user = update_user(
+            request.user,
+            serializer.validated_data.get("name"),
+            serializer.validated_data.get("phone"),
+        )
+        response_serializer = UserReadSerializer(updated_user)
+        return Response(response_serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        summary="회원탈퇴",
+        tags=["user CRUD"],
+        responses={204: OpenApiResponse(description="탈퇴 성공")},
+    )
+    def delete(self, request):
+        delete_user(request.user)
+
+        response = Response(
+            {"message": "회원탈퇴 완료!"}, status=status.HTTP_204_NO_CONTENT
+        )
+        # 탈퇴후 쿠키 삭제
         return delete_auth_cookies(response)
