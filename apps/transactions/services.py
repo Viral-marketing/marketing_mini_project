@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import transaction
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
@@ -9,7 +11,7 @@ class CustomPermissionService(IsAuthenticated):
     def has_permission(self, request, view):
         if not super().has_permission(request, view):  # GET요청 또는 로그인한 유저
             return False
-        if check_staff(request.user):  # staff인지 만일 staff면 GET요청이 아니면 False
+        if check_staff(request):  # staff인지 만일 staff면 GET요청이 아니면 False
             return False
         return True
 
@@ -40,9 +42,20 @@ class TransactionListService:
 
     @staticmethod
     @transaction.atomic
-    def transaction_create(
-        user, account, transaction_type, transaction_method, transaction_amount, memo
-    ):
+    def transaction_create(user, transaction_data):
+        account_val = transaction_data["account"]
+        if isinstance(account_val, int):
+            from apps.accounts.models import Account
+
+            account = Account.objects.get(id=account_val)
+        else:
+            account = account_val
+        transaction_type = transaction_data["transaction_type"]
+        transaction_method = transaction_data["transaction_method"]
+        transaction_amount = Decimal(str(transaction_data["transaction_amount"]))
+        memo = transaction_data.get("memo", "")
+        # validated_data.get("memo","")로 수정해야 memo가 blank일때 에러를 방지할수 있다
+        # services에서 정의한 transaction_create을 활용하기 전 변수 설정
         if not account.user == user:
             raise PermissionDenied("본인 계좌에 대한 거래만 가능합니다")
         if transaction_type == "DEPOSIT":  # 입금이면 +
@@ -69,6 +82,9 @@ class TransactionListService:
 
 class TransactionDetailService:
     @staticmethod
-    def transaction_detail(user, pk):
+    def transaction_detail(user):
+        queryset = Transaction.objects.filter(account__user=user)
+        if user.is_superuser:
+            queryset = Transaction.objects.all()
         # Queryset을 반환 하기 때문에 get사용 불가능 filter 사용해야함
-        return Transaction.objects.filter(account__user=user, pk=pk)
+        return queryset
