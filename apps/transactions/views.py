@@ -32,7 +32,7 @@ class TransactionListView(generics.ListCreateAPIView):
             OpenApiParameter(
                 "transaction_amount",
                 OpenApiTypes.DECIMAL,
-                description="입력한 금액 이상의 거래내역 조회"
+                description="입력한 금액 이상의 거래내역 조회",
             ),
         ],
     )
@@ -107,7 +107,7 @@ class TransactionDetailView(generics.RetrieveUpdateDestroyAPIView):
             OpenApiParameter(
                 "transaction_amount",
                 OpenApiTypes.DECIMAL,
-                description="입력한 금액 이상의 거래내역 조회"
+                description="입력한 금액 이상의 거래내역 조회",
             ),
         ],
     )
