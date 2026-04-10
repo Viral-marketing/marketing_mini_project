@@ -1,7 +1,7 @@
-from .models import Account
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import IsAuthenticated
 
+from .models import Account
 from .serializers import AccountSerializer
 
 
