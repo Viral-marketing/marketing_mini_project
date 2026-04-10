@@ -1,3 +1,5 @@
+import logging
+
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -8,6 +10,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import UserCreateSerializer, UserLoginSerializer, UserReadSerializer
 from .services import create_user, login_user
 from .utils import delete_auth_cookies, set_auth_cookies
+
+logger = logging.getLogger(__name__)
 
 
 class UserCreateAPIView(APIView):
@@ -87,13 +91,13 @@ class LogoutAPIView(APIView):
         response = Response(status=status.HTTP_200_OK)
 
         try:
-            refresh_tocken = request.COOKIES.get("refresh_token")
+            refresh_token = request.COOKIES.get("refresh_token")
 
-            if refresh_tocken:
-                token = RefreshToken(refresh_tocken)
+            if refresh_token:
+                token = RefreshToken(refresh_token)
                 token.blacklist()
 
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning(f" 토큰 블랙리스트 등록 실패: {e}")
 
         return delete_auth_cookies(response)

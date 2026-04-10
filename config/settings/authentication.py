@@ -19,7 +19,7 @@ class CookieJWTAuthentication(JWTAuthentication):
 
     def enforce_csrf(self, request):
         """가짜 사이트에서 요청을 위조하는 CSRF 공격을 막습니다."""
-        check = CSRFCheck(request)
+        check = CSRFCheck(lambda req: None)
         check.process_request(request)
         reason = check.process_view(request, None, (), {})
 
