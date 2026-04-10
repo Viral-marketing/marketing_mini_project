@@ -1,10 +1,9 @@
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins, viewsets
-from rest_framework.permissions import IsAuthenticated
+from apps.transactions.services import CustomPermissionService
 
 from .models import Account
 from .serializers import AccountSerializer
-
 
 @extend_schema_view(
     list=extend_schema(
@@ -29,7 +28,8 @@ class AccountViewSet(
     viewsets.GenericViewSet,
 ):
     serializer_class = AccountSerializer
-    permission_classes = [IsAuthenticated]
+    # 직접 정의한 로직에 따라 API 접근 권한 검사
+    permission_classes = (CustomPermissionService,)
 
     def get_queryset(self):
         # 사용자가 접근할 수 있는 데이터의 범위 결정
