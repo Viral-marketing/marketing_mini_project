@@ -63,3 +63,8 @@ class UserReadSerializer(serializers.ModelSerializer):
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True, style={"input_type": "password"})
+
+
+class UserUpdateSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=20, required=False)
+    phone = serializers.CharField(max_length=15, required=False)
