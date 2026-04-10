@@ -27,14 +27,14 @@ class TransactionViewTest(APITestCase):
         self.transaction.save()
         self.url = reverse("transactions:list")
 
-        self.client.force_login(user=self.user)
+        self.client.force_authenticate(user=self.user)
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["account"], self.account.id)
 
-        self.client.force_login(user=self.superuser)
+        self.client.force_authenticate(user=self.superuser)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
@@ -49,7 +49,7 @@ class TransactionViewTest(APITestCase):
             amount=1000.95,
         )
         url = reverse("transactions:list")
-        self.client.force_login(user=self.user)
+        self.client.force_authenticate(user=self.user)
         response = self.client.post(url, data=self.transaction)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.account.refresh_from_db()
@@ -83,16 +83,16 @@ class TransactionDetailViewTest(APITestCase):
             "transactions:detail", kwargs={"transaction_pk": self.transaction.id}
         )
 
-        self.client.force_login(user=self.user)
+        self.client.force_authenticate(user=self.user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["id"], self.transaction.id)
 
-        self.client.force_login(user=self.superuser)
+        self.client.force_authenticate(user=self.superuser)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["id"], self.transaction.id)
 
-        self.client.force_login(user=self.other_user)
+        self.client.force_authenticate(user=self.other_user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
