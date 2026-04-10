@@ -69,11 +69,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "django" },
     { name = "djangorestframework" },
-<<<<<<< Updated upstream
     { name = "djangorestframework-simplejwt" },
-=======
-    { name = "djangorestframework-stubs" },
->>>>>>> Stashed changes
     { name = "psycopg2-binary" },
     { name = "python-dotenv" },
 ]
