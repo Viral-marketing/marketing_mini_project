@@ -6,7 +6,7 @@ from rest_framework import generics
 from rest_framework.exceptions import ValidationError
 
 from apps.transactions.models import Transaction
-from apps.transactions.serializers import TransactionSerializer
+from apps.transactions.serializers import TransactionSerializer,TransactionUpdateSerializer
 from apps.transactions.services import (
     CustomPermissionService,
     TransactionDetailService,
@@ -89,10 +89,13 @@ class TransactionListView(generics.ListCreateAPIView):
 
 class TransactionDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Transaction.objects.all()
-    serializer_class = TransactionSerializer
     permission_classes = (CustomPermissionService,)
     lookup_field = "id"
     lookup_url_kwarg = "transaction_pk"
+    def get_serializer_class(self):
+        if self.request.method in ["PUT","PATCH"]:
+            return TransactionUpdateSerializer
+        return TransactionSerializer
 
     @extend_schema(
         summary="특정계좌의 특정 거래내역 단일 조회",
@@ -117,8 +120,8 @@ class TransactionDetailView(generics.RetrieveUpdateDestroyAPIView):
     @extend_schema(
         summary="특정계좌의 특정 거래내역 전체 수정",
         description="사용자의 특정 거래 내역 정보를 전체 수정",
-        request=TransactionSerializer,
-        responses={201: TransactionSerializer},
+        request=TransactionUpdateSerializer,
+        responses={201: TransactionUpdateSerializer},
     )
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
@@ -126,8 +129,8 @@ class TransactionDetailView(generics.RetrieveUpdateDestroyAPIView):
     @extend_schema(
         summary="특정계좌의 특정 거래내역 일부 수정",
         description="사용자의 특정 거래 내역의 일부 수정",
-        request=TransactionSerializer,
-        responses={201: TransactionSerializer},
+        request=TransactionUpdateSerializer,
+        responses={201: TransactionUpdateSerializer},
     )
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
