@@ -35,7 +35,7 @@ class TransactionListService:
             )
         if account:
             if account == "null":
-                queryset = Transaction.objects.filter(account__isnull=True)
+                queryset = queryset.filter(account__isnull=True)
             else:
                 queryset = queryset.filter(account_id=account)
         if transaction_type:  # transaction_type가 입력됬을때 조건추가
