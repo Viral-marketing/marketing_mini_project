@@ -23,10 +23,10 @@ class Migration(migrations.Migration):
                 ('period_start', models.DateTimeField()),
                 ('period_end', models.DateTimeField()),
                 ('description', models.TextField()),
-                ('result_image', models.ImageField(default='analysis/default.png', upload_to='analysis/')),
+                ('result_image', models.ImageField(default='celery/default.png', upload_to='celery/')),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='analysis', to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='celery', to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

@@ -3,10 +3,10 @@ from rest_framework.routers import DefaultRouter
 
 from apps.analysis.views import AnalysisViewSet
 
-app_name = 'analysis'
+app_name = 'celery'
 
 router = DefaultRouter()
-router.register(r"analysis",AnalysisViewSet, basename="analysis")
+router.register(r"celery",AnalysisViewSet, basename="celery")
 
 urlpatterns = [
     path('',include(router.urls))

@@ -33,5 +33,5 @@ urlpatterns = [
         name="swagger-ui",
     ),
     path("api/", include("apps.accounts.urls")),
-    path('api/', include('apps.analysis.urls',namespace="analysis")),
+    path('api/', include('apps.analysis.urls',namespace="celery")),
 ]

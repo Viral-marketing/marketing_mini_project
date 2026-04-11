@@ -5,13 +5,13 @@ from apps.common.constants import ANALYSIS_TYPES, ANALYSIS_ABOUT
 User = get_user_model()
 
 class Analysis(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="analysis")
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="celery")
     type = models.CharField(choices=ANALYSIS_TYPES,default="DAILY",max_length=10)
     about = models.CharField(choices=ANALYSIS_ABOUT,default="TOTAL_SPENDING",max_length=50)
     period_start = models.DateTimeField()
     period_end = models.DateTimeField()
     description = models.TextField()
-    result_image = models.ImageField(upload_to="analysis/",default="analysis/default.png")
+    result_image = models.ImageField(upload_to="celery/",default="celery/default.png")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
