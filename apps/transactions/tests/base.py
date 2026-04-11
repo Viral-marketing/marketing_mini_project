@@ -37,6 +37,7 @@ class CreateTestUser:
             name="superuser",
             email="super@super.com",
             password="super_password",
+            is_staff=True,
             is_superuser=True,
         )
 

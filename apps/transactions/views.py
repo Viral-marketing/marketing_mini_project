@@ -26,7 +26,9 @@ class TransactionListView(generics.ListCreateAPIView):
         summary="거래 내역 목록 조회 및 검색",
         description="사용자의 거래 내역을 조회 계좌, 타입, 금액으로 필터링이 가능",
         parameters=[
-            OpenApiParameter("account", OpenApiTypes.INT, description="계좌 ID 필터"),
+            OpenApiParameter("account", OpenApiTypes.INT,
+                             description="계좌 ID 필터(계좌가 삭제된 거래내역 조회시 0 입력"
+                             ),
             OpenApiParameter(
                 "transaction_type",
                 OpenApiTypes.STR,
@@ -105,7 +107,8 @@ class TransactionDetailView(generics.RetrieveUpdateDestroyAPIView):
         summary="특정계좌의 특정 거래내역 단일 조회",
         description="사용자의 거래 내역을 단일 조회",
         parameters=[
-            OpenApiParameter("account", OpenApiTypes.INT, description="계좌 ID 필터"),
+            OpenApiParameter("account", OpenApiTypes.INT.STR,
+                             description="계좌 ID 필터"),
             OpenApiParameter(
                 "transaction_type",
                 OpenApiTypes.STR,
