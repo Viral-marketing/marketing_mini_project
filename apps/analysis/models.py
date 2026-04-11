@@ -6,8 +6,8 @@ User = get_user_model()
 
 class Analysis(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="analysis")
-    type = models.CharField(choices=ANALYSIS_TYPES,default=ANALYSIS_TYPES.DAILY,max_length=10)
-    about = models.CharField(choices=ANALYSIS_ABOUT,default=ANALYSIS_ABOUT.TOTAL_SPENDING,max_length=10)
+    type = models.CharField(choices=ANALYSIS_TYPES,default="DAILY",max_length=10)
+    about = models.CharField(choices=ANALYSIS_ABOUT,default="TOTAL_SPENDING",max_length=50)
     period_start = models.DateTimeField()
     period_end = models.DateTimeField()
     description = models.TextField()
