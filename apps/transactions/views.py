@@ -5,7 +5,6 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import generics
 from rest_framework.exceptions import ValidationError
 
-from apps.transactions.models import Transaction
 from apps.transactions.serializers import (
     TransactionSerializer,
     TransactionUpdateSerializer,
@@ -18,7 +17,7 @@ from apps.transactions.services import (
 
 
 class TransactionListView(generics.ListCreateAPIView):
-    queryset = Transaction.objects.all()
+    # queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
     permission_classes = (CustomPermissionService,)  # 로그인 유저 검증 및 권한체크
 
@@ -91,7 +90,7 @@ class TransactionListView(generics.ListCreateAPIView):
 
 
 class TransactionDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Transaction.objects.all()
+    # queryset = Transaction.objects.all()
     permission_classes = (CustomPermissionService,)
     lookup_field = "id"
     lookup_url_kwarg = "transaction_pk"
