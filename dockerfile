@@ -30,5 +30,6 @@ EXPOSE 8000
 
 # Django 개발 서버 실행
 COPY ./scripts /scripts
-RUN chmod +x /scripts/run.sh
+# run_worker 권한도 같이 부여해야하므로 *.sh로 수정
+RUN chmod +x /scripts/*.sh
 CMD ["/scripts/run.sh"]
