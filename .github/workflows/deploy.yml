@@ -69,9 +69,10 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST << 'ENDSSH'
             set -e
             cd /home/ubuntu/marketing_mini_project
-            docker compose -f docker-compose.prod.yml pull
-            docker compose -f docker-compose.prod.yml down
-            docker compose -f docker-compose.prod.yml up -d
+            sudo docker system prune -a -f
+            sudo docker compose -f docker-compose.prod.yml pull
+            sudo docker compose -f docker-compose.prod.yml down
+            sudo docker compose -f docker-compose.prod.yml up -d
             sleep 5
-            docker compose -f docker-compose.prod.yml exec -T web python manage.py migrate --noinput
+            sudo docker compose -f docker-compose.prod.yml exec -T web python manage.py migrate --noinput
           ENDSSH
