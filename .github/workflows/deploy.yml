@@ -46,6 +46,11 @@ jobs:
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+          EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+          DEFAULT_FROM_EMAIL: ${{ secrets.DEFAULT_FROM_EMAIL }}
+          CELERY_BROKER_URL: ${{ secrets.CELERY_BROKER_URL }}
+          CELERY_RESULT_BACKEND: ${{ secrets.CELERY_RESULT_BACKEND }}
         run: |
           cat > /tmp/prod.env << ENVEOF
           SECRET_KEY=${SECRET_KEY}
@@ -56,6 +61,11 @@ jobs:
           DB_USER=${DB_USER}
           DB_PASSWORD=${DB_PASSWORD}
           DJANGO_SETTINGS_MODULE=config.settings.prod
+          EMAIL_HOST_USER=${EMAIL_HOST_USER}
+          EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+          DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL}
+          CELERY_BROKER_URL=${CELERY_BROKER_URL}
+          CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
           ENVEOF
           scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa \
             /tmp/prod.env $USER@$HOST:/home/ubuntu/marketing_mini_project/.env
