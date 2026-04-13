@@ -4,6 +4,17 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class CookieJWTAuthentication(JWTAuthentication):
+
+    def enforce_csrf(self, request):
+        # 요청을 위조하는 CSRF 공격 차단
+        check = CSRFCheck(lambda req: None)
+        check.process_request(request)
+        reason = check.process_view(request, None, (), {})
+
+        if reason:
+            raise exceptions.PermissionDenied(f"CSRF Failed: {reason}")
+
+
     def authenticate(self, request):
 
         raw_token = request.COOKIES.get("access_token")
@@ -17,11 +28,4 @@ class CookieJWTAuthentication(JWTAuthentication):
 
         return user, validate_token
 
-    def enforce_csrf(self, request):
-        """가짜 사이트에서 요청을 위조하는 CSRF 공격을 막습니다."""
-        check = CSRFCheck(lambda req: None)
-        check.process_request(request)
-        reason = check.process_view(request, None, (), {})
 
-        if reason:
-            raise exceptions.PermissionDenied(f"CSRF Failed: {reason}")
