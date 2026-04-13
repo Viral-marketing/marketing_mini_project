@@ -1,7 +1,6 @@
 from decimal import Decimal
 
 from django.db import transaction
-from django.db.models import Q
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 
@@ -12,13 +11,28 @@ class CustomPermissionService(IsAuthenticated):
     def has_permission(self, request, view):
         if not super().has_permission(request, view):  # GET요청 또는 로그인한 유저
             return False
-        if check_staff(request):  # staff인지 만일 staff면 GET요청이 아니면 False
-            return False
+        if check_staff(request):
+            # staff인지 만일 staff면 GET요청이 아니면 False
+            if check_superuser(request):
+                # superuser는 is_staff랑 is_superuser가 둘다 True
+                return True
+            if not check_method(request):
+                # staff가 참일때는 get만 가능하도록
+                return False
+            return True
         return True
 
 
 def check_staff(request):
-    return bool(request.user.is_staff and request.method not in SAFE_METHODS)
+    return bool(request.user.is_staff)
+
+
+def check_superuser(request):
+    return bool(request.user.is_superuser)
+
+
+def check_method(request):
+    return bool(request.method in SAFE_METHODS)
 
 
 class TransactionListService:
@@ -26,15 +40,20 @@ class TransactionListService:
     def transaction_list(
         user, account=None, transaction_type=None, transaction_amount=None
     ):
-        # 1. 기본 쿼리셋 설정
         if user.is_superuser:
             queryset = Transaction.objects.all()
         else:
-            queryset = Transaction.objects.filter(
-                Q(account__user=user) | Q(account__isnull=True)
-            )
+            queryset = Transaction.objects.filter(user=user)
+
+        # # 1. 기본 쿼리셋 설정
+        # if user.is_superuser:
+        #     queryset = Transaction.objects.all()
+        # else:
+        #     queryset = Transaction.objects.filter(
+        #         Q(account__user=user) | Q(account__isnull=True)
+        #     )
         if account:
-            if account == "null":
+            if account == "0":
                 queryset = queryset.filter(account__isnull=True)
             else:
                 queryset = queryset.filter(account_id=account)
@@ -74,6 +93,7 @@ class TransactionListService:
             account.save()
         return Transaction.objects.create(
             account=account,
+            user=user,
             transaction_type=transaction_type,
             transaction_method=transaction_method,
             transaction_amount=transaction_amount,
@@ -88,7 +108,7 @@ class TransactionListService:
 class TransactionDetailService:
     @staticmethod
     def transaction_detail(user):
-        queryset = Transaction.objects.filter(account__user=user)
+        queryset = Transaction.objects.filter(user=user)
         if user.is_superuser:
             queryset = Transaction.objects.all()
         # Queryset을 반환 하기 때문에 get사용 불가능 filter 사용해야함

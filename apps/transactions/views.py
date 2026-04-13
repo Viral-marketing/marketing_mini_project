@@ -5,7 +5,6 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import generics
 from rest_framework.exceptions import ValidationError
 
-from apps.transactions.models import Transaction
 from apps.transactions.serializers import (
     TransactionSerializer,
     TransactionUpdateSerializer,
@@ -18,7 +17,7 @@ from apps.transactions.services import (
 
 
 class TransactionListView(generics.ListCreateAPIView):
-    queryset = Transaction.objects.all()
+    # queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
     permission_classes = (CustomPermissionService,)  # 로그인 유저 검증 및 권한체크
 
@@ -26,7 +25,11 @@ class TransactionListView(generics.ListCreateAPIView):
         summary="거래 내역 목록 조회 및 검색 test 4번",
         description="사용자의 거래 내역을 조회 계좌, 타입, 금액으로 필터링이 가능",
         parameters=[
-            OpenApiParameter("account", OpenApiTypes.INT, description="계좌 ID 필터"),
+            OpenApiParameter(
+                "account",
+                OpenApiTypes.INT,
+                description="계좌 ID 필터,삭제된 계좌의 거래내역 조회 시 0 입력",
+            ),
             OpenApiParameter(
                 "transaction_type",
                 OpenApiTypes.STR,
@@ -91,7 +94,7 @@ class TransactionListView(generics.ListCreateAPIView):
 
 
 class TransactionDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Transaction.objects.all()
+    # queryset = Transaction.objects.all()
     permission_classes = (CustomPermissionService,)
     lookup_field = "id"
     lookup_url_kwarg = "transaction_pk"

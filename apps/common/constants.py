@@ -125,6 +125,7 @@ ANALYSIS_TYPES = [
     ("WEEKLY", "주간"),
     ("MONTHLY", "월간"),
     ("YEARLY", "연간"),
+    ("CUSTOM", "사용자지정"),
 ]
 
 ANALYSIS_ABOUT = [

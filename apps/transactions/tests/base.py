@@ -72,6 +72,7 @@ class CreateTestTransaction:
     @staticmethod
     def create_test_transaction(
         account,
+        user,
         transaction_type,
         transaction_method,
         transaction_amount,
@@ -80,6 +81,7 @@ class CreateTestTransaction:
     ):
         return Transaction.objects.create(
             account=account,
+            user=user,
             transaction_type=transaction_type,
             transaction_method=transaction_method,
             transaction_amount=transaction_amount,
@@ -88,11 +90,13 @@ class CreateTestTransaction:
         )
 
     @staticmethod
-    def create_test_DEPOSIT_transaction(account):
+    def create_test_DEPOSIT_transaction(account, user):
         return Transaction.objects.create(
             account=account,
+            user=user,
             transaction_type="DEPOSIT",
             transaction_method="ATM",
             transaction_amount=100000.08,
+            balance_after=account.balance,
             memo="test_DEPOSIT_memo",
         )
