@@ -30,8 +30,13 @@ jobs:
           echo "$PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
+          # EC2에 .env 파일 생성
+          printf "SECRET_KEY=%s\nDB_HOST=%s\nDB_PORT=%s\nDB_NAME=%s\nDB_USER=%s\nDB_PASSWORD=%s\nALLOWED_HOSTS=%s\n" \
+            "$SECRET_KEY" "$DB_HOST" "$DB_PORT" "$DB_NAME" "$DB_USER" "$DB_PASSWORD" "$ALLOWED_HOSTS" \
+            | ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "cat > ~/.env"
+
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "docker pull $DOCKER_USERNAME/django-app:latest"
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "docker stop \$(docker ps -q) 2>/dev/null; true"
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "docker rm \$(docker ps -a -q) 2>/dev/null; true"
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "docker image prune -f"
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "sleep 2; docker run -d --name django_container -p 8000:8000 -e SECRET_KEY=$SECRET_KEY -e DB_HOST=$DB_HOST -e DB_PORT=$DB_PORT -e DB_NAME=$DB_NAME -e DB_USER=$DB_USER -e DB_PASSWORD=$DB_PASSWORD -e ALLOWED_HOSTS=$ALLOWED_HOSTS $DOCKER_USERNAME/django-app:latest"
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "sleep 2; docker run -d --name django_container -p 8000:8000 --env-file ~/.env $DOCKER_USERNAME/django-app:latest"
