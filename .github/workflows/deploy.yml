@@ -23,9 +23,16 @@ jobs:
           echo "$PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST << EOF
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST << 'EOF'
             docker pull $DOCKER_USERNAME/django-app:latest
             docker stop django_container || true
             docker rm django_container || true
-            docker run -d --name django_container -p 8000:8000 --env-file /home/ubuntu/marketing_mini_project/.env $DOCKER_USERNAME/django-app:latest
+            docker run -d \
+              --name django_container \
+              -p 8000:8000 \
+              --env-file /home/ubuntu/marketing_mini_project/.env \
+              $DOCKER_USERNAME/django-app:latest
+
+            sleep 3
+            docker exec django_container python manage.py migrate --noinput
           EOF
