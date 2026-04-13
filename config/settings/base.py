@@ -14,7 +14,6 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-from celery.schedules import crontab
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -49,7 +48,7 @@ INSTALLED_APPS = [
     "apps.users",
     "apps.accounts",
     "apps.transactions",
-    "apps.analysis"
+    "apps.analysis",
 ]
 
 MIDDLEWARE = [
@@ -173,6 +172,3 @@ EMAIL_USE_TLS = False
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
-
-
-

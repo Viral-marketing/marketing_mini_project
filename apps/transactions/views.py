@@ -28,7 +28,8 @@ class TransactionListView(generics.ListCreateAPIView):
             OpenApiParameter(
                 "account",
                 OpenApiTypes.INT,
-                description="계좌 ID 필터,삭제된 계좌의 거래내역 조회 시 0 입력"),
+                description="계좌 ID 필터,삭제된 계좌의 거래내역 조회 시 0 입력",
+            ),
             OpenApiParameter(
                 "transaction_type",
                 OpenApiTypes.STR,

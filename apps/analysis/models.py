@@ -1,18 +1,27 @@
-from django.db import models
 from django.contrib.auth import get_user_model
-from apps.common.constants import ANALYSIS_TYPES, ANALYSIS_ABOUT
+from django.db import models
+
+from apps.common.constants import ANALYSIS_ABOUT, ANALYSIS_TYPES
 
 User = get_user_model()
 
+
 class Analysis(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="analysis")
-    type = models.CharField(choices=ANALYSIS_TYPES,default="DAILY",max_length=10)
-    about = models.CharField(choices=ANALYSIS_ABOUT,default="TOTAL_SPENDING",max_length=50)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="analysis")
+    type = models.CharField(choices=ANALYSIS_TYPES, default="DAILY", max_length=10)
+    about = models.CharField(
+        choices=ANALYSIS_ABOUT, default="TOTAL_SPENDING", max_length=50
+    )
     period_start = models.DateTimeField()
     period_end = models.DateTimeField()
     description = models.TextField()
-    result_image = models.ImageField(upload_to="media/celery/",default="media/celery/default.png",null=True,blank=True)
-    result_json = models.JSONField(null=True,blank=True)
+    result_image = models.ImageField(
+        upload_to="media/celery/",
+        default="media/celery/default.png",
+        null=True,
+        blank=True,
+    )
+    result_json = models.JSONField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
