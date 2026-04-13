@@ -22,9 +22,7 @@ def process_analysis(user,data):
     else:
         return f"TOTAL_SPENDING(지출)과 TOTAL_INCOME(수입) 중 하나를 선택해주세요"
 
-
-
-    # 제시한 기간에 맞는 거래내역이 었을때 No data 출력
+    # 제시한 기간에 맞는 거래내역이 없을 때 No data 출력
     if not queryset.exists():
         return "No data"
 
@@ -76,10 +74,10 @@ def daily_analysis():
     start_date = yesterday.replace(hour=0, minute=0, second=0, microsecond=0)
     end_date = yesterday.replace(hour=23, minute=59, second=59, microsecond=999)
     daily_analysis_spending(users,start_date,end_date)
-    daily_analysis_for_income(users,start_date,end_date)
+    daily_analysis_income(users,start_date,end_date)
 
 def daily_analysis_spending(users,start_date,end_date):
-    for user in users:
+    for user in users: # 모든 유저들의 정보와 생성할 정기 분석 정보 제작
        user_info = {
            "id" : user.id,
            "name":user.name,
@@ -92,9 +90,9 @@ def daily_analysis_spending(users,start_date,end_date):
            "period_start" : start_date.isoformat(),
            "period_end" : end_date.isoformat(),
        }
-       process_analysis.delay(user_info,analysis_data)
+       process_analysis.delay(user_info,analysis_data) # 분석 및 이메일 전송 함수 호출
 
-def daily_analysis_for_income(users,start_date,end_date):
+def daily_analysis_income(users,start_date,end_date):
     for user in users:
        user_info = {
            "id" : user.id,
@@ -109,4 +107,3 @@ def daily_analysis_for_income(users,start_date,end_date):
            "period_end" : end_date.isoformat(),
        }
        process_analysis.delay(user_info,analysis_data)
-

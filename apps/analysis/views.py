@@ -30,8 +30,8 @@ class AnalysisViewSet(
         return Analysis.objects.filter(user=self.request.user)
 
     @extend_schema(
-        summary="분석 이메일 발송 요청",
-        description="본인의 이메일로 분석결과를 발송합니다"
+        summary="특정기간 소비 또는 수입 분석 요청",
+        description="본인의 이메일로 분석결과를 발송합니다, 소비는 WITHDRAW, 수입은 DEPOSIT을 입력해주세요"
     )
     def create(self, request):
         serializer = self.get_serializer(data=request.data)

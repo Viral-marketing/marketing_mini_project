@@ -1,7 +1,6 @@
 from decimal import Decimal
 
 from django.db import transaction
-from django.db.models import Q
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 
@@ -29,11 +28,6 @@ def check_superuser(request):
 
 def check_method(request):
     return bool(request.method in SAFE_METHODS)
-
-
-def check_staff(request):
-    return bool(request.user.is_staff and request.method not in SAFE_METHODS)
-
 
 class TransactionListService:
     @staticmethod
@@ -108,7 +102,7 @@ class TransactionListService:
 class TransactionDetailService:
     @staticmethod
     def transaction_detail(user):
-        queryset = Transaction.objects.filter(account__user=user)
+        queryset = Transaction.objects.filter(user=user)
         if user.is_superuser:
             queryset = Transaction.objects.all()
         # Queryset을 반환 하기 때문에 get사용 불가능 filter 사용해야함
