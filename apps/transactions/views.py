@@ -6,7 +6,10 @@ from rest_framework import generics
 from rest_framework.exceptions import ValidationError
 
 from apps.transactions.models import Transaction
-from apps.transactions.serializers import TransactionSerializer
+from apps.transactions.serializers import (
+    TransactionSerializer,
+    TransactionUpdateSerializer,
+)
 from apps.transactions.services import (
     CustomPermissionService,
     TransactionDetailService,
@@ -20,7 +23,7 @@ class TransactionListView(generics.ListCreateAPIView):
     permission_classes = (CustomPermissionService,)  # 로그인 유저 검증 및 권한체크
 
     @extend_schema(
-        summary="거래 내역 목록 조회 및 검색",
+        summary="거래 내역 목록 조회 및 검색 test 4번",
         description="사용자의 거래 내역을 조회 계좌, 타입, 금액으로 필터링이 가능",
         parameters=[
             OpenApiParameter("account", OpenApiTypes.INT, description="계좌 ID 필터"),
@@ -89,10 +92,14 @@ class TransactionListView(generics.ListCreateAPIView):
 
 class TransactionDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Transaction.objects.all()
-    serializer_class = TransactionSerializer
     permission_classes = (CustomPermissionService,)
     lookup_field = "id"
     lookup_url_kwarg = "transaction_pk"
+
+    def get_serializer_class(self):
+        if self.request.method in ["PUT", "PATCH"]:
+            return TransactionUpdateSerializer
+        return TransactionSerializer
 
     @extend_schema(
         summary="특정계좌의 특정 거래내역 단일 조회",
@@ -117,8 +124,8 @@ class TransactionDetailView(generics.RetrieveUpdateDestroyAPIView):
     @extend_schema(
         summary="특정계좌의 특정 거래내역 전체 수정",
         description="사용자의 특정 거래 내역 정보를 전체 수정",
-        request=TransactionSerializer,
-        responses={201: TransactionSerializer},
+        request=TransactionUpdateSerializer,
+        responses={201: TransactionUpdateSerializer},
     )
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
@@ -126,8 +133,8 @@ class TransactionDetailView(generics.RetrieveUpdateDestroyAPIView):
     @extend_schema(
         summary="특정계좌의 특정 거래내역 일부 수정",
         description="사용자의 특정 거래 내역의 일부 수정",
-        request=TransactionSerializer,
-        responses={201: TransactionSerializer},
+        request=TransactionUpdateSerializer,
+        responses={201: TransactionUpdateSerializer},
     )
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)

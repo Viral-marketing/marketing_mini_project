@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from django.db import transaction
+from django.db.models import Q
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 
@@ -25,14 +26,18 @@ class TransactionListService:
     def transaction_list(
         user, account=None, transaction_type=None, transaction_amount=None
     ):
-        # 기본적으로 user만 인자로 받고 나머지는 기본값으로 None을 할당해 기본 queryset
-        # superuser는 전체 거래내역 조회가능
-        queryset = Transaction.objects.filter(account__user=user)
+        # 1. 기본 쿼리셋 설정
         if user.is_superuser:
             queryset = Transaction.objects.all()
-
-        if account:  # account가 입력됬을때 조건추가
-            queryset = queryset.filter(account_id=account)
+        else:
+            queryset = Transaction.objects.filter(
+                Q(account__user=user) | Q(account__isnull=True)
+            )
+        if account:
+            if account == "null":
+                queryset = queryset.filter(account__isnull=True)
+            else:
+                queryset = queryset.filter(account_id=account)
         if transaction_type:  # transaction_type가 입력됬을때 조건추가
             queryset = queryset.filter(transaction_type=transaction_type)
         if transaction_amount:  # transaction_amount가 입력됬을때 조건추가

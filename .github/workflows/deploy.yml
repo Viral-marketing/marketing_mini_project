@@ -1,0 +1,78 @@
+# .github/workflows/deploy.yml
+
+name: Deploy to EC2
+
+on:
+  workflow_run:
+    workflows: ["Build Docker Image"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Setup SSH
+        env:
+          PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Copy docker-compose.prod.yml to EC2
+        env:
+          HOST: ${{ secrets.EC2_HOST }}
+          USER: ${{ secrets.EC2_USER }}
+        run: |
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa \
+            docker-compose.prod.yml $USER@$HOST:/home/ubuntu/marketing_mini_project/
+
+      - name: Write .env file to EC2
+        env:
+          HOST: ${{ secrets.EC2_HOST }}
+          USER: ${{ secrets.EC2_USER }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          cat > /tmp/prod.env << ENVEOF
+          SECRET_KEY=${SECRET_KEY}
+          ALLOWED_HOSTS=${ALLOWED_HOSTS}
+          DB_HOST=${DB_HOST}
+          DB_PORT=${DB_PORT}
+          DB_NAME=${DB_NAME}
+          DB_USER=${DB_USER}
+          DB_PASSWORD=${DB_PASSWORD}
+          DJANGO_SETTINGS_MODULE=config.settings.prod
+          ENVEOF
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa \
+            /tmp/prod.env $USER@$HOST:/home/ubuntu/marketing_mini_project/.env
+          rm /tmp/prod.env
+
+      - name: Deploy on EC2
+        env:
+          HOST: ${{ secrets.EC2_HOST }}
+          USER: ${{ secrets.EC2_USER }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST << 'ENDSSH'
+            set -e
+            cd /home/ubuntu/marketing_mini_project
+            sudo docker system prune -a -f
+            sudo docker compose -f docker-compose.prod.yml pull
+            sudo docker compose -f docker-compose.prod.yml down
+            sudo docker compose -f docker-compose.prod.yml up -d
+            sleep 5
+            sudo docker compose -f docker-compose.prod.yml exec -T web python manage.py migrate --noinput
+          ENDSSH
