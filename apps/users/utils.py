@@ -1,10 +1,12 @@
 from django.conf import settings
 
+is_secure = not settings.DEBUG
+
 
 def set_auth_cookies(response, access_token, refresh_token):
-    is_secure = not settings.DEBUG
     # Access Token
     response.set_cookie(
+        path="/",
         key="access_token",
         value=access_token,
         httponly=True,  # 자바스크립트 접근 차단 (XSS 방어)
@@ -16,6 +18,7 @@ def set_auth_cookies(response, access_token, refresh_token):
 
     #  Refresh Token
     response.set_cookie(
+        path="/",
         key="refresh_token",
         value=refresh_token,
         httponly=True,
@@ -39,4 +42,5 @@ def delete_auth_cookies(response):
         path="/",
         samesite="Lax",
     )
+
     return response
