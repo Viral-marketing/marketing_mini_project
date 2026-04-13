@@ -14,7 +14,13 @@ from .serializers import (
     UserReadSerializer,
     UserUpdateSerializer,
 )
-from .services import create_user, delete_user, login_user, update_user, refresh_access_token
+from .services import (
+    create_user,
+    delete_user,
+    login_user,
+    refresh_access_token,
+    update_user,
+)
 from .utils import delete_auth_cookies, set_auth_cookies
 
 logger = logging.getLogger(__name__)

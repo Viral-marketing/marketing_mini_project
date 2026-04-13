@@ -55,4 +55,4 @@ def refresh_access_token(refresh_token: str):
             "refresh_token": str(refresh),
         }
     except TokenError as e:
-        raise exceptions.AuthenticationFailed("변조 되거난 사용한 토큰")
+        raise exceptions.AuthenticationFailed("변조 되거난 사용한 토큰") from e
