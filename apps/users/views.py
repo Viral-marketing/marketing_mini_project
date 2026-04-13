@@ -128,7 +128,7 @@ class UserProfileAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
-        summary="유저 프롶필 수정",
+        summary="유저 프로필 수정",
         tags=["user CRUD"],
         request=UserUpdateSerializer,
         responses={200: UserReadSerializer},
