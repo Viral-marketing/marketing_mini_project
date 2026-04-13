@@ -40,15 +40,20 @@ class TransactionListService:
     def transaction_list(
         user, account=None, transaction_type=None, transaction_amount=None
     ):
-        # 1. 기본 쿼리셋 설정
         if user.is_superuser:
             queryset = Transaction.objects.all()
         else:
-            queryset = Transaction.objects.filter(
-                Q(account__user=user) | Q(account__isnull=True)
-            )
+            queryset = Transaction.objects.filter(user=user)
+
+        # # 1. 기본 쿼리셋 설정
+        # if user.is_superuser:
+        #     queryset = Transaction.objects.all()
+        # else:
+        #     queryset = Transaction.objects.filter(
+        #         Q(account__user=user) | Q(account__isnull=True)
+        #     )
         if account:
-            if account == "null":
+            if account == "0":
                 queryset = queryset.filter(account__isnull=True)
             else:
                 queryset = queryset.filter(account_id=account)
@@ -88,6 +93,7 @@ class TransactionListService:
             account.save()
         return Transaction.objects.create(
             account=account,
+            user=user,
             transaction_type=transaction_type,
             transaction_method=transaction_method,
             transaction_amount=transaction_amount,

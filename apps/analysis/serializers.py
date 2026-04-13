@@ -26,4 +26,4 @@ class AnalysisSerializer(serializers.ModelSerializer):
 
 class AnalysisPostSerializer(AnalysisSerializer):
     class Meta(AnalysisSerializer.Meta):
-        fields=["type","about","period_start","period_end"]
+        fields=["about","period_start","period_end"]

@@ -37,12 +37,17 @@ class AnalysisViewSet(
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = {
-            "type" : serializer.data["type"],
-            "about" : serializer.data["about"],
-            "period_start" : serializer.data["period_start"],
-            "period_end" : serializer.data["period_end"],
+            "type" : "CUSTOM",
+            "about" : serializer.validated_data["about"],
+            "period_start" : serializer.validated_data["period_start"],
+            "period_end" : serializer.validated_data["period_end"],
         }
-        process_spending_analysis.delay(request.user.email,request.user.id,data)
+        user = {
+            "id":request.user.id,
+            "name":request.user.name,
+            "email":request.user.email,
+        }
+        process_spending_analysis.delay(user,data)
         return Response(
             {"message":"분석이 완료되면 이메일로 발송해드립니다"},
             status=status.HTTP_201_CREATED

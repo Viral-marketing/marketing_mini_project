@@ -1,8 +1,10 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
 from apps.accounts.models import Account
 from apps.common.constants import TRANSACTION_METHOD, TRANSACTION_TYPE
 
+User = get_user_model()
 
 class Transaction(models.Model):
     # # 거래 타입
@@ -24,6 +26,7 @@ class Transaction(models.Model):
         Account, on_delete=models.SET_NULL, related_name="transactions", null=True
     )
     # 계좌가 삭제되어도 거래기록은 남아있어야함
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="transactions")
     transaction_amount = models.DecimalField(max_digits=20, decimal_places=2)
     # 소수점 2자리까지 표시, 18자리 까지 표시가능
     transaction_type = models.CharField(

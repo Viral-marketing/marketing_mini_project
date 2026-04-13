@@ -11,7 +11,8 @@ class Analysis(models.Model):
     period_start = models.DateTimeField()
     period_end = models.DateTimeField()
     description = models.TextField()
-    result_image = models.ImageField(upload_to="media/celery/",default="media/celery/default.png")
+    result_image = models.ImageField(upload_to="media/celery/",default="media/celery/default.png",null=True,blank=True)
+    result_json = models.JSONField(null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

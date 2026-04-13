@@ -50,6 +50,20 @@ services:
     depends_on:
       - db
       - redis
+#시간 조회용 celery 서버
+  celery_beat:
+    build: .
+    command: /scripts/run_beat.sh
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - .:/app
+      - media_volume:/app/media
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.dev
 
 volumes:
   postgres_data:
