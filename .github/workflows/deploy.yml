@@ -23,9 +23,7 @@ jobs:
           echo "$PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "
-            docker pull $DOCKER_USERNAME/django-app:latest;
-            docker stop \$(docker ps -q) 2>/dev/null; true;
-            docker rm \$(docker ps -a -q) 2>/dev/null; true;
-            sleep 2;
-            docker run -d --name django_container -p 8000:8000 --env-file /home/ubuntu/marketing_mini_project/.
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "docker pull $DOCKER_USERNAME/django-app:latest"
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "docker stop \$(docker ps -q) 2>/dev/null; true"
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "docker rm \$(docker ps -a -q) 2>/dev/null; true"
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "sleep 2; docker run -d --name django_container -p 8000:8000 --env-file /home/ubuntu/marketing_mini_project/.env $DOCKER_USERNAME/django-app:latest"
