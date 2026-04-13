@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  web:
+    image: ememgt1/django-app:latest
+    command: /scripts/run.sh
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
