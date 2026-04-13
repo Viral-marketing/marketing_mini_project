@@ -25,7 +25,7 @@ jobs:
 
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST << EOF
             docker pull $DOCKER_USERNAME/django-app:latest
-            docker stop django_container || true
-            docker rm django_container || true
-            docker run -d --name django_container -p 8000:8000 $DOCKER_USERNAME/django-app:latest
+            docker stop \$(docker ps -q) || true
+            docker rm \$(docker ps -a -q) || true
+            docker run -d --name django_container -p 8000:8000 --env-file /home/ubuntu/marketing_mini_project/.env $DOCKER_USERNAME/django-app:latest
           EOF
