@@ -23,7 +23,7 @@ class TransactionListView(generics.ListCreateAPIView):
     permission_classes = (CustomPermissionService,)  # 로그인 유저 검증 및 권한체크
 
     @extend_schema(
-        summary="거래 내역 목록 조회 및 검색 test",
+        summary="거래 내역 목록 조회 및 검색 test 2번",
         description="사용자의 거래 내역을 조회 계좌, 타입, 금액으로 필터링이 가능",
         parameters=[
             OpenApiParameter("account", OpenApiTypes.INT, description="계좌 ID 필터"),

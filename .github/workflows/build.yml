@@ -5,6 +5,8 @@ on:
     workflows: ["Code Quality Checks"]
     types:
       - completed
+    branches:
+      - release
 
 jobs:
   build:
