@@ -28,5 +28,6 @@ jobs:
             docker stop \$(docker ps -q) || true
             docker rm \$(docker ps -a -q) || true
             sleep 2
-            docker run -d --name django_container -p 8000:8000 --env-file /home/ubuntu/marketing_mini_project/.env $DOCKER_USERNAME/django-app:latest
+            cd /home/ubuntu/marketing_mini_project
+            docker run -d --name django_container -p 8000:8000 --env-file .env $DOCKER_USERNAME/django-app:latest
           EOF
