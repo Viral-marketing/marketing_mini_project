@@ -153,9 +153,7 @@ class UserProfileAPIView(APIView):
     def delete(self, request):
         delete_user(request.user)
 
-        response = Response(
-            {"message": "회원탈퇴 완료!"}, status=status.HTTP_204_NO_CONTENT
-        )
+        response = Response( status=status.HTTP_204_NO_CONTENT)
         # 탈퇴후 쿠키 삭제
         return delete_auth_cookies(response)
 
