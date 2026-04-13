@@ -18,20 +18,21 @@ jobs:
           HOST: ${{ secrets.EC2_HOST }}
           USER: ${{ secrets.EC2_USER }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: |
           mkdir -p ~/.ssh
           echo "$PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST << 'EOF'
-            docker pull $DOCKER_USERNAME/django-app:latest
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST << EOF
             docker stop django_container || true
             docker rm django_container || true
             docker run -d \
               --name django_container \
               -p 8000:8000 \
               --env-file /home/ubuntu/marketing_mini_project/.env \
-              $DOCKER_USERNAME/django-app:latest
+              -e SECRET_KEY="$SECRET_KEY" \
+              ememgt1/django-app:latest
 
             sleep 3
             docker exec django_container python manage.py migrate --noinput
