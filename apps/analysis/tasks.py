@@ -24,7 +24,7 @@ def process_spending_analysis(user_email,user_id,data):
     plt.switch_backend('Agg') # celery_worker서버에는 GUI가 없으니 추가한 설정
     # plt.rc("font",family="NanumBarunGothic") # 한글 폰트 설정 필요 시
     queryset = Transaction.objects.filter(
-        user_id=user_id,
+        user=user_id,
         created_at__range=[data['period_start'],data['period_end']],
         # Django의 queryset 필터 문법(컬럼명 뒤에 __두개 붙어셔 필터링 옵션 추가
     )
@@ -51,7 +51,7 @@ def process_spending_analysis(user_email,user_id,data):
     period_end = data['period_end']
 
     analysis = Analysis.objects.create(
-        user_id=user_id,
+        user=user_id,
         type=type,
         about=about,
         description=f"{user_email}님의 분석",

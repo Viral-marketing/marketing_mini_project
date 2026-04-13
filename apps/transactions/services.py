@@ -12,9 +12,23 @@ class CustomPermissionService(IsAuthenticated):
     def has_permission(self, request, view):
         if not super().has_permission(request, view):  # GET요청 또는 로그인한 유저
             return False
-        if check_staff(request):  # staff인지 만일 staff면 GET요청이 아니면 False
-            return False
+        if check_staff(request): # staff인지 만일 staff면 GET요청이 아니면 False
+            if check_superuser(request): # superuser는 is_staff랑 is_superuser가 둘다 True
+                return True
+            if not check_method(request): # staff가 참일때는 get만 가능하도록
+                return False
+            return True
         return True
+
+
+def check_staff(request):
+    return bool(request.user.is_staff)
+
+def check_superuser(request):
+    return bool(request.user.is_superuser)
+
+def check_method(request):
+    return bool(request.method in SAFE_METHODS)
 
 
 def check_staff(request):

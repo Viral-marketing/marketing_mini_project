@@ -35,7 +35,13 @@ class AnalysisViewSet(
     )
     def create(self, request):
         serializer = self.get_serializer(data=request.data)
-        data = serializer.is_valid(raise_exception=True)
+        serializer.is_valid(raise_exception=True)
+        data = {
+            "type" : serializer.data["type"],
+            "about" : serializer.data["about"],
+            "period_start" : serializer.data["period_start"],
+            "period_end" : serializer.data["period_end"],
+        }
         process_spending_analysis.delay(request.user.email,request.user.id,data)
         return Response(
             {"message":"분석이 완료되면 이메일로 발송해드립니다"},
