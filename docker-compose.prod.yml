@@ -1,37 +1,14 @@
 version: '3.9'
 
 services:
-  db:
-    image: postgres:15-alpine
-    restart: always
-    env_file:
-      - .env
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "${DB_PORT:-5432}:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   web:
-    image: ${DOCKER_USERNAME}/django-app:latest  # ✅ dev는 build:. / prod는 Docker Hub 이미지 사용
+    image: ememgt1/django-app:latest
     command: /scripts/run.sh
     env_file:
       - .env
     ports:
       - "8000:8000"
-    depends_on:
-      db:
-        condition: service_healthy  # ✅ db 헬스체크 통과 후 web 시작
-    restart: unless-stopped        # ✅ 컨테이너 죽으면 자동 재시작
-    # volumes: .:/app 제거         # ✅ prod는 코드 마운트 X, 이미지 안에 포함된 코드 사용
+    restart: unless-stopped
 
 volumes:
   postgres_data:
