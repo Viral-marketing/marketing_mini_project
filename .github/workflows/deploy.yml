@@ -4,7 +4,7 @@ name: Deploy to EC2
 
 on:
   workflow_run:
-    workflows: ["Build Docker Image"]  #  build.yml의 name과 정확히 일치
+    workflows: ["Build Docker Image"]
     types:
       - completed
 
@@ -47,8 +47,7 @@ jobs:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-# > 로 덮어쓰기 (>> 사용하면 배포할 때마다 중복 append됨)
-          cat > /tmp/prod.env << EOF
+          cat > /tmp/prod.env << ENVEOF
           SECRET_KEY=${SECRET_KEY}
           ALLOWED_HOSTS=${ALLOWED_HOSTS}
           DB_HOST=${DB_HOST}
@@ -57,11 +56,10 @@ jobs:
           DB_USER=${DB_USER}
           DB_PASSWORD=${DB_PASSWORD}
           DJANGO_SETTINGS_MODULE=config.settings.prod
-          EOF
+          ENVEOF
           scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa \
             /tmp/prod.env $USER@$HOST:/home/ubuntu/marketing_mini_project/.env
           rm /tmp/prod.env
-# runner에 민감정보 파일 남기지 않기
 
       - name: Deploy on EC2
         env:
@@ -71,9 +69,9 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST << 'ENDSSH'
             set -e
             cd /home/ubuntu/marketing_mini_project
-            docker-compose -f docker-compose.prod.yml pull
-            docker-compose -f docker-compose.prod.yml down
-            docker-compose -f docker-compose.prod.yml up -d
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml down
+            docker compose -f docker-compose.prod.yml up -d
             sleep 5
-            docker-compose -f docker-compose.prod.yml exec -T web python manage.py migrate --noinput
+            docker compose -f docker-compose.prod.yml exec -T web python manage.py migrate --noinput
           ENDSSH
