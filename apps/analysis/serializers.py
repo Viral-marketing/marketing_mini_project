@@ -13,6 +13,7 @@ class AnalysisSerializer(serializers.ModelSerializer):
             "period_start",
             "period_end",
             "result_image",
+            "result_json",
             "created_at",
             "updated_at",
         ]
@@ -20,6 +21,7 @@ class AnalysisSerializer(serializers.ModelSerializer):
             "user",
             "description",
             "result_image",
+            "result_json",
             "created_at",
             "updated_at",
         ]

@@ -1,6 +1,7 @@
 import os
 
 from .base import *
+from celery.schedules import crontab
 
 DEBUG = True
 
@@ -16,3 +17,10 @@ DATABASES = {
 }
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
+
+CELERY_BEAT_SCHEDULE = {
+    'daily-analysis-task': {
+        'task':'apps.analysis.tasks.daily_analysis',
+        'schedule': crontab(hour=0, minute=0),
+    },
+}

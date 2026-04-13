@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from apps.analysis.models import Analysis
 from apps.analysis.serializers import AnalysisSerializer,AnalysisPostSerializer
-from apps.analysis.tasks import process_spending_analysis
+from apps.analysis.tasks import process_analysis
 from apps.transactions.services import CustomPermissionService
 
 @extend_schema(
@@ -47,7 +47,7 @@ class AnalysisViewSet(
             "name":request.user.name,
             "email":request.user.email,
         }
-        process_spending_analysis.delay(user,data)
+        process_analysis.delay(user,data)
         return Response(
             {"message":"분석이 완료되면 이메일로 발송해드립니다"},
             status=status.HTTP_201_CREATED
