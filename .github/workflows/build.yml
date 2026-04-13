@@ -4,11 +4,11 @@ name: Build Docker Image
 
 on:
   workflow_run:
-    workflows: ["Code Quality Checks"]  # ✅ checks.yml의 name과 정확히 일치
+    workflows: ["Code Quality Checks"]
     types:
       - completed
     branches:
-      - main      # ✅ main, develop 브랜치도 추가
+      - main
       - develop
       - release
 
