@@ -18,6 +18,13 @@ jobs:
           HOST: ${{ secrets.EC2_HOST }}
           USER: ${{ secrets.EC2_USER }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
         run: |
           mkdir -p ~/.ssh
           echo "$PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
@@ -27,4 +34,4 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "docker stop \$(docker ps -q) 2>/dev/null; true"
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "docker rm \$(docker ps -a -q) 2>/dev/null; true"
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "docker image prune -f"
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "sleep 2; docker run -d --name django_container -p 8000:8000 --env-file /home/ubuntu/marketing_mini_project/.env $DOCKER_USERNAME/django-app:latest"
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "sleep 2; docker run -d --name django_container -p 8000:8000 -e SECRET_KEY=$SECRET_KEY -e DB_HOST=$DB_HOST -e DB_PORT=$DB_PORT -e DB_NAME=$DB_NAME -e DB_USER=$DB_USER -e DB_PASSWORD=$DB_PASSWORD -e ALLOWED_HOSTS=$ALLOWED_HOSTS $DOCKER_USERNAME/django-app:latest"
