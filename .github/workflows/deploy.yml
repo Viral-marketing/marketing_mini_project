@@ -18,34 +18,14 @@ jobs:
           HOST: ${{ secrets.EC2_HOST }}
           USER: ${{ secrets.EC2_USER }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
         run: |
           mkdir -p ~/.ssh
           echo "$PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-          # GitHub Actions 러너에서 .env 파일 먼저 생성
-          cat > /tmp/.env <<EOF
-          SECRET_KEY=${SECRET_KEY}
-          DB_HOST=${DB_HOST}
-          DB_PORT=${DB_PORT}
-          DB_NAME=${DB_NAME}
-          DB_USER=${DB_USER}
-          DB_PASSWORD=${DB_PASSWORD}
-          ALLOWED_HOSTS=${ALLOWED_HOSTS}
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST << EOF
+            docker pull $DOCKER_USERNAME/django-app:latest
+            docker stop django_container || true
+            docker rm django_container || true
+            docker run -d --name django_container -p 8000:8000 $DOCKER_USERNAME/django-app:latest
           EOF
-
-          # .env 파일을 EC2로 복사
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa /tmp/.env $USER@$HOST:~/.env
-
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "docker pull $DOCKER_USERNAME/django-app:latest"
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "docker stop \$(docker ps -q) 2>/dev/null; true"
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "docker rm \$(docker ps -a -q) 2>/dev/null; true"
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "docker image prune -f"
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "sleep 2; docker run -d --name django_container -p 8000:8000 --env-file ~/.env $DOCKER_USERNAME/django-app:latest"
