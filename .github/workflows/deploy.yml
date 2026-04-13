@@ -1,2 +1,0 @@
-# deploy.yml은 build.yml (Build and Deploy)로 통합되었습니다.
-# release 브랜치 push → checks.yml (CI) → build.yml (Build + Deploy)
