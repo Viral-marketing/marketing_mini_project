@@ -35,3 +35,7 @@ media/
 celerybeat-schedule
 celerybeat-schedule-shm
 celerybeat-schedule-wal
+
+.claude
+.clone
+
