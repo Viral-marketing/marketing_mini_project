@@ -30,10 +30,19 @@ jobs:
           echo "$PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-          # EC2에 .env 파일 생성
-          printf "SECRET_KEY=%s\nDB_HOST=%s\nDB_PORT=%s\nDB_NAME=%s\nDB_USER=%s\nDB_PASSWORD=%s\nALLOWED_HOSTS=%s\n" \
-            "$SECRET_KEY" "$DB_HOST" "$DB_PORT" "$DB_NAME" "$DB_USER" "$DB_PASSWORD" "$ALLOWED_HOSTS" \
-            | ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "cat > ~/.env"
+          # GitHub Actions 러너에서 .env 파일 먼저 생성
+          cat > /tmp/.env <<EOF
+          SECRET_KEY=${SECRET_KEY}
+          DB_HOST=${DB_HOST}
+          DB_PORT=${DB_PORT}
+          DB_NAME=${DB_NAME}
+          DB_USER=${DB_USER}
+          DB_PASSWORD=${DB_PASSWORD}
+          ALLOWED_HOSTS=${ALLOWED_HOSTS}
+          EOF
+
+          # .env 파일을 EC2로 복사
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa /tmp/.env $USER@$HOST:~/.env
 
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "docker pull $DOCKER_USERNAME/django-app:latest"
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USER@$HOST "docker stop \$(docker ps -q) 2>/dev/null; true"
