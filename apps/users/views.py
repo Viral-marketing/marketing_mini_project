@@ -1,6 +1,5 @@
 import logging
 from tokenize import TokenError
-from urllib import response
 
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
@@ -154,8 +153,10 @@ class UserProfileAPIView(APIView):
         # 탈퇴후 쿠키 삭제
         return delete_auth_cookies(response)
 
+
 class TokenRefreshAPIView(APIView):
     permission_classes = [AllowAny]
+
     @extend_schema(
         summary="Token 갱신",
         description="쿠키에 저장된 리프레쉬 토큰으로 새 토큰을 발급",
@@ -170,7 +171,6 @@ class TokenRefreshAPIView(APIView):
         refresh_token_value = request.COOKIES.get("refresh_token")
 
         if not refresh_token_value:
-
             return Response(
                 {"detail": "refresh token이 존재 하지 않음"},
                 status=status.HTTP_401_UNAUTHORIZED,
@@ -178,15 +178,14 @@ class TokenRefreshAPIView(APIView):
 
         try:
             tokens = refresh_token_value(refresh_token_value)
-        except TokenError as e:
-            return Response({"detail": "유효하지 않은 토큰"}, status=status.HTTP_401_UNAUTHORIZED)
+        except TokenError:
+            return Response(
+                {"detail": "유효하지 않은 토큰"}, status=status.HTTP_401_UNAUTHORIZED
+            )
 
         response = Response({"status": "토큰 발금 성공"}, status=status.HTTP_200_OK)
         return set_auth_cookies(
             response=response,
             access_token=tokens["access_token"],
-            refresh_token= tokens["refresh_token"]
-
+            refresh_token=tokens["refresh_token"],
         )
-
-

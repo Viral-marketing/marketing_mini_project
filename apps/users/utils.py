@@ -2,6 +2,7 @@ from django.conf import settings
 
 is_secure = not settings.DEBUG
 
+
 def set_auth_cookies(response, access_token, refresh_token):
     # Access Token
     response.set_cookie(
@@ -35,12 +36,9 @@ def delete_auth_cookies(response):
         key="access_token",
         path="/",  # 쿠키 설정 시의 path와 일치
         samesite="Lax",
-        sequre=is_secure
+        sequre=is_secure,
     )
     response.delete_cookie(
-        key="refresh_token",
-        path="/",
-        samesite="Lax",
-        secure=is_secure
+        key="refresh_token", path="/", samesite="Lax", secure=is_secure
     )
     return response

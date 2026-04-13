@@ -4,7 +4,6 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class CookieJWTAuthentication(JWTAuthentication):
-
     def enforce_csrf(self, request):
         # 요청을 위조하는 CSRF 공격 차단
         check = CSRFCheck(lambda req: None)
@@ -13,7 +12,6 @@ class CookieJWTAuthentication(JWTAuthentication):
 
         if reason:
             raise exceptions.PermissionDenied(f"CSRF Failed: {reason}")
-
 
     def authenticate(self, request):
 
@@ -27,5 +25,3 @@ class CookieJWTAuthentication(JWTAuthentication):
         self.enforce_csrf(request)
 
         return user, validate_token
-
-
