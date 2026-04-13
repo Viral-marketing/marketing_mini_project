@@ -104,7 +104,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
     "REFRESH_TOKEN_LIFETIME": timedelta(minutes=60),
     "ROTATE_REFRESH_TOKENS": True,  # 토큰 재발급 시 리프레쉬 토큰 발급
     "BLACKLIST_AFTER_ROTATION": True,  # 재발급 후 사용한 리프레쉬 토큰 블랙리스트 등록
