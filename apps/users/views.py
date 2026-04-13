@@ -14,7 +14,7 @@ from .serializers import (
     UserReadSerializer,
     UserUpdateSerializer,
 )
-from .services import create_user, delete_user, login_user, update_user
+from .services import create_user, delete_user, login_user, update_user, refresh_access_token
 from .utils import delete_auth_cookies, set_auth_cookies
 
 logger = logging.getLogger(__name__)
@@ -177,7 +177,7 @@ class TokenRefreshAPIView(APIView):
             )
 
         try:
-            tokens = refresh_token_value(refresh_token_value)
+            tokens = refresh_access_token(refresh_token_value)
         except TokenError:
             return Response(
                 {"detail": "유효하지 않은 토큰"}, status=status.HTTP_401_UNAUTHORIZED

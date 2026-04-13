@@ -36,9 +36,6 @@ def delete_auth_cookies(response):
         key="access_token",
         path="/",  # 쿠키 설정 시의 path와 일치
         samesite="Lax",
-        sequre=is_secure,
     )
-    response.delete_cookie(
-        key="refresh_token", path="/", samesite="Lax", secure=is_secure
-    )
+
     return response
