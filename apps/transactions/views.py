@@ -151,6 +151,9 @@ class TransactionDetailView(generics.RetrieveUpdateDestroyAPIView):
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
 
+    def perform_destroy(self, instance):
+        return TransactionDetailService.transaction_delete(instance)
+
     def get_queryset(self):
         """
         RetrieveUpdateDestroyAPIView는 url에 pk를 경로매개변수를 받으므로
