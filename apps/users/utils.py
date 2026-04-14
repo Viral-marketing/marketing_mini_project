@@ -1,6 +1,6 @@
 from django.conf import settings
 
-is_secure =  settings.DEBUG
+is_secure = settings.DEBUG
 
 
 def set_auth_cookies(response, access_token, refresh_token):

@@ -88,7 +88,7 @@ def daily_analysis():
 
     yesterday = datetime.now() - timedelta(days=1)
     start_date = yesterday.replace(hour=0, minute=0, second=0, microsecond=0)
-    end_date = yesterday.replace(hour=23, minute=59, second=59, microsecond=999)
+    end_date = datetime.now().replace(hour=23, minute=59, second=59, microsecond=999)
     daily_analysis_spending(users, start_date, end_date)
     daily_analysis_income(users, start_date, end_date)
 

@@ -113,3 +113,19 @@ class TransactionDetailService:
             queryset = Transaction.objects.all()
         # Queryset을 반환 하기 때문에 get사용 불가능 filter 사용해야함
         return queryset
+
+    @staticmethod
+    @transaction.atomic
+    def transaction_delete(instance):
+        from apps.accounts.models import Account
+
+        if instance.account:
+            account = Account.objects.get(id=instance.account.id)
+            if instance.transaction_type == "DEPOSIT":
+                amount = instance.transaction_amount
+                account.balance -= amount
+            else:
+                amount = instance.transaction_amount
+                account.balance += amount
+            account.save()
+        instance.delete()

@@ -16,7 +16,10 @@ class SendCustomEmail:
             message=message,
             from_email=from_email,
             recipient_list=recipient_list,
-            fail_silently=False,
+            fail_silently=True,
+            # 만일 하나의 요청이 실패했을때 무시할지 안할지를 정함
+            #     만일 False로 하면 하나의 요청이 실패하면 백그라운드 요청 전체 종료
+            #     만일 True로 하면 실패한 요청은 무시하고 다음 요청 진행
         )
 
     @staticmethod

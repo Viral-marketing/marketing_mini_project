@@ -10,5 +10,42 @@ services:
       - "8000:8000"
     restart: unless-stopped
 
+    # redis 서버 생성 (web에서 받은 명령어 저장)
+  redis:
+    image: redis:latest
+    container_name: redis_broker
+    ports:
+      - "6379:6379"
+  # celery_worker 서버 생성
+  #  (시각화 이미지(Matplotlib) :redis에 저장된 이미지 생성 명령어 실행 후 Analysis model의 image컬럼에 추가)
+  #  (알림 기능(Django의 send_mail) : redis에 저장된 메일 전송 명령어 실행)
+  celery_worker:
+    build: .
+    command: /scripts/run_worker.sh
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.dev
+    volumes:
+      - .:/app
+      - media_volume:/app/media
+    depends_on:
+      - db
+      - redis
+  #시간 조회용 celery 서버
+  celery_beat:
+    build: .
+    command: /scripts/run_beat.sh
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - .:/app
+      - media_volume:/app/media
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.dev
+
 volumes:
   postgres_data:
