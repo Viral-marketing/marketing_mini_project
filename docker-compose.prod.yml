@@ -38,4 +38,5 @@ services:
       - .env
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings.base
-
+  volumes:
+    - postgres_data:
