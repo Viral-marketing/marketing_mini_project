@@ -8,5 +8,6 @@ urlpatterns = [
     path("register/", views.UserCreateAPIView.as_view(), name="register"),
     path("login/", views.LoginAPIView.as_view(), name="login"),
     path("logout/", views.LogoutAPIView.as_view(), name="logout"),
-    path("profile/", views.UserProfieAPIView.as_view(), name="profile"),
+    path("profile/", views.UserProfileAPIView.as_view(), name="profile"),
+    path("refresh/", views.TokenRefreshAPIView.as_view(), name="refresh"),
 ]

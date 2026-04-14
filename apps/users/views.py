@@ -1,4 +1,5 @@
 import logging
+from tokenize import TokenError
 
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
@@ -13,7 +14,13 @@ from .serializers import (
     UserReadSerializer,
     UserUpdateSerializer,
 )
-from .services import create_user, delete_user, login_user, update_user
+from .services import (
+    create_user,
+    delete_user,
+    login_user,
+    refresh_access_token,
+    update_user,
+)
 from .utils import delete_auth_cookies, set_auth_cookies
 
 logger = logging.getLogger(__name__)
@@ -108,7 +115,7 @@ class LogoutAPIView(APIView):
         return delete_auth_cookies(response)
 
 
-class UserProfieAPIView(APIView):
+class UserProfileAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
@@ -121,7 +128,7 @@ class UserProfieAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
-        summary="유저 프롶필 수정",
+        summary="유저 프로필 수정",
         tags=["user CRUD"],
         request=UserUpdateSerializer,
         responses={200: UserReadSerializer},
@@ -146,8 +153,43 @@ class UserProfieAPIView(APIView):
     def delete(self, request):
         delete_user(request.user)
 
-        response = Response(
-            {"message": "회원탈퇴 완료!"}, status=status.HTTP_204_NO_CONTENT
-        )
+        response = Response(status=status.HTTP_204_NO_CONTENT)
         # 탈퇴후 쿠키 삭제
         return delete_auth_cookies(response)
+
+
+class TokenRefreshAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    @extend_schema(
+        summary="Token 갱신",
+        description="쿠키에 저장된 리프레쉬 토큰으로 새 토큰을 발급",
+        responses={
+            200: OpenApiResponse(description="토큰 갱신 성(Set-Cookie)"),
+            401: OpenApiResponse(description="리프레쉬 토크 없음 또는 만료"),
+        },
+        tags=["인증"],
+    )
+    def post(self, request):
+
+        refresh_token_value = request.COOKIES.get("refresh_token")
+
+        if not refresh_token_value:
+            return Response(
+                {"detail": "refresh token이 존재 하지 않음"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        try:
+            tokens = refresh_access_token(refresh_token_value)
+        except TokenError:
+            return Response(
+                {"detail": "유효하지 않은 토큰"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        response = Response({"status": "토큰 발금 성공"}, status=status.HTTP_200_OK)
+        return set_auth_cookies(
+            response=response,
+            access_token=tokens["access_token"],
+            refresh_token=tokens["refresh_token"],
+        )

@@ -29,5 +29,13 @@ postgres_data/
 # 기타
 *.log
 .DS_Store
+media/
+
+# Celery Beat 관련 파일 무시
+celerybeat-schedule
+celerybeat-schedule-shm
+celerybeat-schedule-wal
+
 .claude
 .clone
+

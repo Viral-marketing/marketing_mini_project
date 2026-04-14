@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework import exceptions
+from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
@@ -42,3 +43,16 @@ def login_user(email: str, password: str):
         "refresh_token": str(refresh),
         "user": user,
     }
+
+
+# 리프레쉬 토큰
+def refresh_access_token(refresh_token: str):
+
+    try:
+        refresh = RefreshToken(refresh_token)
+        return {
+            "access_token": str(refresh.access_token),
+            "refresh_token": str(refresh),
+        }
+    except TokenError as e:
+        raise exceptions.AuthenticationFailed("변조 되거난 사용한 토큰") from e

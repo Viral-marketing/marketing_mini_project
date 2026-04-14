@@ -2,7 +2,7 @@ from django.urls import path
 
 from apps.transactions.views import TransactionDetailView, TransactionListView
 
-app_name = "transaction"
+app_name = "transactions"
 
 urlpatterns = [
     path("", TransactionListView.as_view(), name="list"),
