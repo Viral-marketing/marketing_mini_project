@@ -18,6 +18,7 @@ class TransactionViewTest(APITestCase):
         self.account = CreateTestAccount.create_test_account(user=self.user)
         self.transaction = CreateTestTransaction.create_test_transaction(
             account=self.account,
+            user=self.user,
             transaction_type="DEPOSIT",
             transaction_method="ATM",
             transaction_amount=1000.96,
@@ -64,6 +65,7 @@ class TransactionDetailViewTest(APITestCase):
         self.account = CreateTestAccount.create_test_account(user=self.user)
         self.transaction = CreateTestTransaction.create_test_transaction(
             account=self.account,
+            user=self.user,
             transaction_type="DEPOSIT",
             transaction_method="ATM",
             transaction_amount=1000.85,
@@ -72,6 +74,7 @@ class TransactionDetailViewTest(APITestCase):
         )
         self.other_transaction = CreateTestTransaction.create_test_transaction(
             account=self.account,
+            user=self.other_user,
             transaction_type="WITHDRAW",
             transaction_method="ATM",
             transaction_amount=1000.46,
