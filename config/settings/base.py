@@ -13,8 +13,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import os
 from datetime import timedelta
 from pathlib import Path
-from celery.schedules import crontab
 
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -181,6 +181,6 @@ CELERY_BEAT_SCHEDULE = {
     "daily-analysis-task": {
         "task": "apps.analysis.tasks.daily_analysis",
         # minute을 */1로 하면 1분마다 메일 발송함
-        "schedule": crontab(minute='*/1'),  # 자정이 되면 daily_analysis 함수 호출
+        "schedule": crontab(minute="*/1"),  # 자정이 되면 daily_analysis 함수 호출
     },
 }

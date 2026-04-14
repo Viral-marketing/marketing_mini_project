@@ -118,6 +118,7 @@ class TransactionDetailService:
     @transaction.atomic
     def transaction_delete(instance):
         from apps.accounts.models import Account
+
         if instance.account:
             account = Account.objects.get(id=instance.account.id)
             if instance.transaction_type == "DEPOSIT":

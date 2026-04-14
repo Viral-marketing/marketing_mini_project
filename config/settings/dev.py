@@ -1,7 +1,5 @@
 import os
 
-from celery.schedules import crontab
-
 from .base import *
 
 DEBUG = True
