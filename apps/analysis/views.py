@@ -31,8 +31,8 @@ class AnalysisViewSet(
     @extend_schema(
         summary="특정기간 소비 또는 수입 분석 요청",
         description="""
-        본인의 이메일로 분석결과를 발송합니다, 소비는 WITHDRAW, 
-        수입은 DEPOSIT을 입력해주세요
+        본인의 이메일로 총 소비 또는 수입 결과를 발송합니다, 소비는 TOTAL_SPENDING, 
+        수입은 TOTAL_INCOME을 입력해주세요
         """,
     )
     def create(self, request):
