@@ -25,12 +25,8 @@ services:
     env_file:
       - .env
     environment:
-      - DJANGO_SETTINGS_MODULE=config.settings.dev
-    volumes:
-      - .:/app
-      - media_volume:/app/media
+      - DJANGO_SETTINGS_MODULE=config.settings.base
     depends_on:
-      - db
       - redis
   #시간 조회용 celery 서버
   celery_beat:
@@ -38,14 +34,8 @@ services:
     command: /scripts/run_beat.sh
     depends_on:
       - redis
-      - db
-    volumes:
-      - .:/app
-      - media_volume:/app/media
     env_file:
       - .env
     environment:
-      - DJANGO_SETTINGS_MODULE=config.settings.dev
+      - DJANGO_SETTINGS_MODULE=config.settings.base
 
-volumes:
-  postgres_data:
