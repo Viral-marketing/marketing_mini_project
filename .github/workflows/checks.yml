@@ -64,7 +64,7 @@ jobs:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           DJANGO_SETTINGS_MODULE: config.settings.dev
         run: |
-          uv run python manage.py makemigrations
+          
           uv run python manage.py migrate
 
       - name: Run Django Tests
